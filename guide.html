@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>使い方ガイド | DebtLens</title>
+<meta name="description" content="DebtLensの5タブの操作方法、計算結果の読み方、前提条件を解説します。">
+<link rel="canonical" href="https://yuuki1210mochi-collab.github.io/debtlens/guide.html">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><a href="index.html"><div class="site-logo">D</div><div><div class="site-title">DebtLens</div><div class="site-tagline">数字は正直に、言葉は優しく</div></div></a></header>
+<nav class="breadcrumb"><a href="index.html">ホーム</a> ＞ 使い方ガイド</nav>
+<article class="content article">
+<h1>使い方ガイド</h1>
+<div class="article-meta"><span>📅 2026年3月22日</span><span>🕐 読了目安 5分</span></div>
+
+<nav class="toc"><div class="toc-title">📑 内容</div><ol>
+<li><a href="#tab1">リボ払いタブ</a></li>
+<li><a href="#tab2">分割払いタブ</a></li>
+<li><a href="#tab3">リボvs分割タブ</a></li>
+<li><a href="#tab4">後払い（BNPL）タブ</a></li>
+<li><a href="#tab5">複数借入タブ</a></li>
+<li><a href="#search">会社名検索の使い方</a></li>
+<li><a href="#reverse">逆算モード</a></li>
+<li><a href="#caveats">計算の前提条件</a></li>
+</ol></nav>
+
+<h2 id="tab1">1. リボ払いタブ 🔄</h2>
+<p>リボ払いの完済期間と利息合計を計算します。</p>
+<p><strong>入力項目：</strong>利用残高・毎月返済額・年率・返済開始月・計算方式（元利定額/元金定額/残高スライド）。スライダーと数値入力のどちらでも操作できます。会社名検索で選択すると年率が自動入力されます。</p>
+<p><strong>結果の読み方：</strong>「完済までの期間」は返済が完了するまでの月数です。「利息の合計」が元金の50%を超える場合は赤く警告表示されます。「総支払額」は元金＋利息の合計です。残高推移グラフで残高がどう減っていくかを確認できます。</p>
+
+<h2 id="tab2">2. 分割払いタブ 📅</h2>
+<p>利用金額を各回数（3〜36回）で分割した場合の月々の支払い額と手数料を一覧表示します。</p>
+<p><strong>入力項目：</strong>利用金額・年率。</p>
+<p><strong>結果の読み方：</strong>手数料が利用金額の20%を超える回数は赤く表示されます。回数が少ないほど手数料は少なくなりますが、月々の支払い額は大きくなります。</p>
+
+<h2 id="tab3">3. リボvs分割タブ ⚖️</h2>
+<p>同じ金額をリボ払いと分割払いで返済した場合のコストを並列比較します。</p>
+<p><strong>入力項目：</strong>利用金額・年率・リボの月額返済額・分割の回数。</p>
+<p><strong>結果の読み方：</strong>コストが高い方の数値が赤く表示されます。「計算上の差額」でどちらがいくらお得かがわかります。なお、これは同一条件での計算結果であり、推奨やアドバイスではありません。</p>
+
+<h2 id="tab4">4. 後払い（BNPL）タブ 📱</h2>
+<p>Paidy（6回・12回・翌月一括）とメルペイスマート払い（定額）の手数料を計算します。</p>
+<p><strong>入力項目：</strong>サービス選択・利用金額。</p>
+<p><strong>結果の読み方：</strong>Paidyの手数料率（月3.5%）とクレジットカードの実質年率は計算方法が異なるため、単純比較はできません。参考値として「単純年換算」を表示しています。</p>
+
+<h2 id="tab5">5. 複数借入タブ 📊</h2>
+<p>複数の借入を登録し、合計の月額返済額・利息合計・全完済期間を確認できます。</p>
+<p><strong>使い方：</strong>「+ 借入を追加」で借入を追加。各カードの名前・残高・月額返済額・年率を入力します。上部に全借入の合計が表示されます。</p>
+
+<h2 id="search">6. 会社名検索の使い方</h2>
+<p>各タブの上部にある検索バーに会社名を入力すると、50社の中から候補が表示されます。選択すると、その会社の上限金利が年率欄に自動入力されます。</p>
+<p>なお、表示される金利は各社の上限金利（初回契約時に適用されることが多い金利）です。実際の適用金利は審査結果や利用条件により異なります。</p>
+
+<h2 id="reverse">7. 逆算モード</h2>
+<p>リボ払いタブの「🔄 逆算モード」ボタンを押すと、目標完済月数から必要な月額返済額を逆算できます。「24ヶ月で完済したい場合、毎月いくら返せばいいか？」がわかります。</p>
+
+<h2 id="caveats">8. 計算の前提条件</h2>
+<div class="box box-yellow">
+<div class="box-title">⚠ ご注意ください</div>
+<p style="font-size:13px;margin-bottom:6px">本ツールの計算結果は以下の前提に基づく概算です。</p>
+<p style="font-size:13px;margin-bottom:4px">• 金利は固定（変動金利には未対応）</p>
+<p style="font-size:13px;margin-bottom:4px">• 追加利用なし（返済のみのシナリオ）</p>
+<p style="font-size:13px;margin-bottom:4px">• 遅延損害金・年会費・保険料等は含まない</p>
+<p style="font-size:13px;margin-bottom:4px">• 端数処理は四捨五入（各社の実際の処理とは異なる場合あり）</p>
+<p style="font-size:13px;margin-bottom:0">• 表示金利は各社の上限金利であり、実際の適用金利とは異なる場合あり</p>
+</div>
+<p>正確な返済額については、ご利用のカード会社・金融機関の公式サイトまたはお問い合わせ窓口でご確認ください。</p>
+
+<div class="cta-block"><p style="font-size:14px;margin-bottom:14px;color:var(--c-gray-800)">さっそく計算してみましょう</p><a href="index.html" class="cta-btn">DebtLens を使う →</a></div>
+</article>
+<footer class="site-footer"><nav class="footer-links"><a href="index.html">ホーム</a><a href="guide.html">使い方ガイド</a><a href="glossary.html">用語集</a><a href="privacy.html">プライバシーポリシー</a><a href="about.html">運営者情報</a><a href="trademarks.html">商標について</a></nav><p>© 2026 DebtLens</p></footer>
+</body></html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リボ払いの仕組みをわかりやすく解説 | DebtLens コラム</title>
+<meta name="description" content="リボ払い（リボルビング払い）の利息構造、残高スライド方式・元利定額方式・元金定額方式の違い、追加利用の落とし穴をわかりやすく解説します。">
+<link rel="canonical" href="https://yuuki1210mochi-collab.github.io/debtlens/ribo-shikumi.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "リボ払いの仕組みをわかりやすく解説",
+  "description": "リボ払いの利息構造と3つの計算方式、追加利用の落とし穴を初心者向けに解説",
+  "author": { "@type": "Organization", "name": "DebtLens" },
+  "publisher": { "@type": "Organization", "name": "DebtLens" },
+  "datePublished": "2026-03-22",
+  "dateModified": "2026-03-22"
+}
+</script>
+<style>
+:root {
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --gray-50: #f8f9fa;
+  --gray-100: #f0f0f0;
+  --gray-200: #e9ecef;
+  --gray-400: #adb5bd;
+  --gray-500: #888;
+  --gray-800: #1a1a2e;
+  --yellow-50: #fffbeb;
+  --yellow-200: #fde68a;
+  --yellow-800: #92400e;
+  --red-50: #fff5f5;
+  --red-200: #fecaca;
+  --red-600: #dc2626;
+  --radius: 14px;
+  --max-w: 720px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+  color: var(--gray-800);
+  background: linear-gradient(180deg, #f6fef8 0%, #ffffff 30%);
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--green-600); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Header ── */
+.site-header {
+  max-width: var(--max-w); margin: 0 auto;
+  padding: 20px 20px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.site-logo {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--green-500), var(--green-600));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #fff; font-weight: 700;
+}
+.site-title { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+.site-tagline { font-size: 11px; color: var(--gray-500); margin-top: -2px; }
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+  max-width: var(--max-w); margin: 16px auto 0; padding: 0 20px;
+  font-size: 12px; color: var(--gray-500);
+}
+.breadcrumb a { color: var(--gray-500); }
+.breadcrumb a:hover { color: var(--green-600); }
+
+/* ── Article ── */
+.article {
+  max-width: var(--max-w); margin: 20px auto 0; padding: 0 20px;
+}
+.article h1 {
+  font-size: 24px; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.4; margin-bottom: 8px;
+}
+.article-meta {
+  font-size: 12px; color: var(--gray-500); margin-bottom: 28px;
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.article h2 {
+  font-size: 18px; font-weight: 700; margin: 36px 0 14px;
+  padding-left: 14px;
+  border-left: 4px solid var(--green-500);
+}
+.article h3 {
+  font-size: 15px; font-weight: 700; margin: 24px 0 10px;
+}
+.article p {
+  margin-bottom: 16px; font-size: 15px;
+}
+
+/* ── Info Boxes ── */
+.box {
+  border-radius: var(--radius); padding: 18px 20px; margin: 20px 0;
+}
+.box-green { background: var(--green-50); border: 1px solid var(--green-100); }
+.box-yellow { background: var(--yellow-50); border: 1px solid var(--yellow-200); }
+.box-red { background: var(--red-50); border: 1px solid var(--red-200); }
+.box-gray { background: var(--gray-50); border: 1px solid var(--gray-200); }
+.box-title {
+  font-size: 13px; font-weight: 700; margin-bottom: 8px;
+}
+.box-green .box-title { color: var(--green-600); }
+.box-yellow .box-title { color: var(--yellow-800); }
+.box-red .box-title { color: var(--red-600); }
+
+/* ── Table ── */
+.table-wrap {
+  overflow-x: auto; margin: 20px 0;
+  border-radius: var(--radius); border: 1px solid var(--gray-200);
+}
+.table-wrap table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.table-wrap th {
+  background: var(--gray-50); padding: 10px 14px;
+  text-align: left; font-weight: 600; color: var(--gray-500); font-size: 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.table-wrap td {
+  padding: 10px 14px; border-bottom: 1px solid var(--gray-100);
+}
+.table-wrap tr:last-child td { border-bottom: none; }
+
+/* ── CTA ── */
+.cta-block {
+  background: var(--green-50); border: 1px solid var(--green-100);
+  border-radius: var(--radius); padding: 24px; text-align: center;
+  margin: 36px 0;
+}
+.cta-block a {
+  display: inline-block; background: var(--green-500); color: #fff;
+  padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px;
+  transition: background 0.2s;
+}
+.cta-block a:hover { background: var(--green-600); text-decoration: none; }
+
+/* ── Related ── */
+.related {
+  margin: 40px 0 20px;
+}
+.related h2 { border-left: none; padding-left: 0; font-size: 16px; }
+.related-list {
+  display: flex; flex-direction: column; gap: 10px; margin-top: 14px;
+}
+.related-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: 12px; padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+.related-card:hover { border-color: var(--green-500); text-decoration: none; }
+.related-icon { font-size: 20px; flex-shrink: 0; }
+.related-info { flex: 1; }
+.related-info span { font-size: 14px; font-weight: 600; color: var(--gray-800); display: block; }
+.related-info small { font-size: 12px; color: var(--gray-500); }
+
+/* ── Footer ── */
+.site-footer {
+  max-width: var(--max-w); margin: 40px auto 0; padding: 20px;
+  border-top: 1px solid var(--gray-100); text-align: center;
+}
+.site-footer p { font-size: 11px; color: #ccc; }
+.footer-links { display: flex; gap: 16px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+.footer-links a { font-size: 12px; color: var(--gray-500); }
+
+/* ── TOC ── */
+.toc {
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: var(--radius); padding: 18px 20px; margin: 20px 0;
+}
+.toc-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--gray-800); }
+.toc ol { padding-left: 20px; }
+.toc li { font-size: 13px; margin-bottom: 6px; }
+.toc a { color: var(--gray-800); }
+.toc a:hover { color: var(--green-600); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
+    <div class="site-logo">D</div>
+    <div>
+      <div class="site-title">DebtLens</div>
+      <div class="site-tagline">数字は正直に、言葉は優しく</div>
+    </div>
+  </a>
+</header>
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="パンくずリスト">
+  <a href="index.html">ホーム</a> ＞ <a href="index.html#columns">コラム</a> ＞ リボ払いの仕組み
+</nav>
+
+<!-- Article -->
+<article class="article">
+  <h1>リボ払いの仕組みをわかりやすく解説<br><small style="font-size:14px;color:var(--gray-500);font-weight:400;">── 利息構造・3つの方式・追加利用の落とし穴</small></h1>
+  <div class="article-meta">
+    <span>📅 2026年3月22日</span>
+    <span>🕐 読了目安 6分</span>
+    <span>✏️ DebtLens編集部</span>
+  </div>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">📑 この記事の内容</div>
+    <ol>
+      <li><a href="#what">リボ払いとは何か</a></li>
+      <li><a href="#interest">利息はどう計算されるのか</a></li>
+      <li><a href="#methods">3つの計算方式の違い</a></li>
+      <li><a href="#trap">追加利用が危険な理由</a></li>
+      <li><a href="#slide">残高スライド方式の仕組み</a></li>
+      <li><a href="#check">自分のリボ残高を確認する方法</a></li>
+      <li><a href="#summary">まとめ</a></li>
+    </ol>
+  </nav>
+
+  <p>「毎月の支払いが同じだから安心」──リボ払いにそんな印象を持っていませんか？ この記事では、リボ払いの利息が実際にどう計算されているのか、なぜ残高がなかなか減らないのか、その構造を数字で解き明かしていきます。</p>
+
+  <h2 id="what">1. リボ払いとは何か</h2>
+  <p>リボルビング払い（リボ払い）は、クレジットカードやローンで利用した金額に関係なく、毎月あらかじめ決められた金額を返済する方式です。10万円使っても30万円使っても、設定金額が月1万円なら毎月の引き落としは1万円前後になります。</p>
+  <p>「支払額が一定で家計管理しやすい」と説明されることがありますが、その裏では未払いの残高に対して利息が発生し続けています。残高が大きいほど、毎月の返済額のうち利息の割合が増え、元金の返済に充てられる部分が減る──これがリボ払いの最大の特徴です。</p>
+
+  <h2 id="interest">2. 利息はどう計算されるのか</h2>
+  <p>リボ払いの利息は「未払い残高 × 月利」で毎月計算されます。たとえば年率15.0%なら月利は約1.25%です。</p>
+
+  <div class="box box-green">
+    <div class="box-title">💡 計算例：残高30万円・年率15%・月1万円返済</div>
+    <p style="margin-bottom:8px;font-size:14px;">1ヶ月目の利息 = 300,000円 × 1.25% = <strong>3,750円</strong></p>
+    <p style="margin-bottom:8px;font-size:14px;">元金返済分 = 10,000円 − 3,750円 = <strong>6,250円</strong></p>
+    <p style="margin-bottom:0;font-size:14px;">残高 = 300,000円 − 6,250円 = <strong>293,750円</strong></p>
+  </div>
+
+  <p>返済額1万円のうち、元金に充てられたのは6,250円だけ。残りの3,750円は利息として消えています。この構造が毎月繰り返されるため、残高30万円を年率15%・月1万円で返済すると、完済までに約38ヶ月かかり、利息の合計は約7万円を超えます。</p>
+
+  <div class="box box-yellow">
+    <div class="box-title">⚠ よくある誤解</div>
+    <p style="margin-bottom:0;font-size:14px;">「毎月1万円×30回=30万円」で30ヶ月で終わると思いがちですが、利息がかかるため実際は38ヶ月以上かかります。差額の8ヶ月分以上はすべて利息コストです。</p>
+  </div>
+
+  <h2 id="methods">3. 3つの計算方式の違い</h2>
+  <p>リボ払いには主に3つの計算方式があり、どの方式が適用されるかはカード会社や契約によって異なります。</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>方式</th><th>毎月の支払い</th><th>特徴</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>元利定額方式</strong></td>
+          <td>一定（利息含む）</td>
+          <td>支払額が一定で分かりやすいが、残高が大きいときは元金がほとんど減らない</td>
+        </tr>
+        <tr>
+          <td><strong>元金定額方式</strong></td>
+          <td>元金一定＋利息</td>
+          <td>残高が大きいときは支払い額が高くなるが、元金が確実に減っていく</td>
+        </tr>
+        <tr>
+          <td><strong>残高スライド方式</strong></td>
+          <td>残高に応じて変動</td>
+          <td>残高が減ると最低支払額も下がるため、完済が大幅に長引くことがある</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>元利定額方式</h3>
+  <p>毎月の支払い額が一定になる方式です。たとえば月1万円と設定すると、利息がいくらであっても引き落としは1万円です。家計管理はしやすいですが、残高が大きいときは利息の割合が高くなり、元金がほとんど減らない状態が続きます。</p>
+
+  <h3>元金定額方式</h3>
+  <p>元金の返済額を一定にし、それに利息を上乗せする方式です。元金1万円と設定した場合、残高30万円・年率15%なら1ヶ月目の支払いは1万円＋3,750円＝13,750円になります。支払い額は毎月変動しますが、元金が確実に減るため、元利定額方式と比べて完済が早く、利息の総額も少なくなります。</p>
+
+  <h3 id="slide">残高スライド方式</h3>
+  <p>利用残高の水準に応じて最低支払い額が自動的に変わる方式です。多くのカード会社では、残高10万円以下なら月5,000円、20万円以下なら月10,000円というように段階的に設定されています。</p>
+  <p>一見合理的に見えますが、残高が減ると支払い額も下がるため完済までの期間が大幅に伸びます。残高が10万円を切ったあとは月5,000円の返済になり、利息を差し引くと元金は月3,000〜4,000円程度しか減らない状態が続きます。</p>
+
+  <div class="box box-red">
+    <div class="box-title">⚠ 残高スライド方式の落とし穴</div>
+    <p style="margin-bottom:0;font-size:14px;">残高30万円を残高スライド方式（年率15%）で返済すると、完済までに約50ヶ月以上かかることがあります。元利定額で月1万円返済した場合の約38ヶ月と比べると、1年以上長く利息を支払い続けることになります。</p>
+  </div>
+
+  <h2 id="trap">4. 追加利用が危険な理由</h2>
+  <p>リボ払いの最大のリスクは「追加利用」です。毎月の支払い額が変わらないため、追加で買い物をしても家計への影響を感じにくい構造になっています。</p>
+  <p>たとえば残高20万円・月1万円返済で少しずつ元金を減らしていたところに、5万円の追加利用をした場合、残高は25万円に戻ります。しかし月々の引き落としは1万円のまま変わりません。そのため「返しても返しても残高が減らない」状態に陥りやすくなります。</p>
+  <p>毎月の返済額が一定だからこそ、追加利用の痛みが感じにくいのです。利用明細で残高を定期的に確認する習慣がとても大切です。</p>
+
+  <h2 id="check">5. 自分のリボ残高を確認する方法</h2>
+  <p>多くのカード会社では、Webの会員サイトやスマートフォンアプリからリボ払いの残高を確認できます。確認するポイントは3つです。</p>
+
+  <div class="box box-gray">
+    <div class="box-title">確認すべき3つの数字</div>
+    <p style="font-size:14px;margin-bottom:6px;"><strong>① リボ残高</strong>：現在の未払い残高がいくらか</p>
+    <p style="font-size:14px;margin-bottom:6px;"><strong>② 適用年率</strong>：自分の契約で何%の年率が適用されているか</p>
+    <p style="font-size:14px;margin-bottom:0;"><strong>③ 月々の設定額</strong>：現在の毎月の返済額がいくらに設定されているか</p>
+  </div>
+
+  <p>この3つがわかれば、DebtLensのシミュレーターに入力するだけで、完済までの期間と利息の合計を即座に計算できます。</p>
+
+  <div class="cta-block">
+    <p style="font-size:14px;margin-bottom:14px;color:var(--gray-800);">あなたのリボ残高、あといくらで完済できる？</p>
+    <a href="index.html">DebtLens で計算する →</a>
+  </div>
+
+  <h2 id="summary">6. まとめ</h2>
+  <p>リボ払いは毎月の支払い額が一定で管理しやすく見えますが、残高に対して利息が発生し続ける仕組みです。特に注意すべきポイントは以下の通りです。</p>
+  <p>第一に、毎月の返済額のうちどれだけが元金に充てられているかを把握すること。第二に、自分のカードがどの計算方式（元利定額・元金定額・残高スライド）を採用しているかを確認すること。第三に、追加利用は残高をリセットしてしまうため、可能な限り避けること。</p>
+  <p>まずは現在の残高・年率・月額返済額の3つを確認し、シミュレーターで完済までの道筋を見てみてください。数字を把握するだけで、漠然とした不安は具体的な計画に変わります。</p>
+
+  <!-- Related Articles -->
+  <nav class="related">
+    <h2>関連コラム</h2>
+    <div class="related-list">
+      <a href="ribo-vs-bunkatsu.html" class="related-card">
+        <div class="related-icon">⚖️</div>
+        <div class="related-info">
+          <span>リボ払いと分割払いの違い</span>
+          <small>7項目で比較。コスト差と適性がわかる</small>
+        </div>
+      </a>
+      <a href="bnpl-chuiten.html" class="related-card">
+        <div class="related-icon">📱</div>
+        <div class="related-info">
+          <span>後払い・BNPLの注意点</span>
+          <small>Paidy・メルペイの手数料を実数値で解説</small>
+        </div>
+      </a>
+      <a href="glossary.html" class="related-card">
+        <div class="related-icon">📖</div>
+        <div class="related-info">
+          <span>金融用語集（18語）</span>
+          <small>リボ・分割・BNPL関連の用語をやさしく解説</small>
+        </div>
+      </a>
+    </div>
+  </nav>
+</article>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <nav class="footer-links">
+    <a href="index.html">ホーム</a>
+    <a href="guide.html">使い方ガイド</a>
+    <a href="glossary.html">用語集</a>
+    <a href="privacy.html">プライバシーポリシー</a>
+    <a href="about.html">運営者情報</a>
+    <a href="trademarks.html">商標について</a>
+  </nav>
+  <p>© 2026 DebtLens — 本サイトは情報提供を目的としており金融アドバイスではありません。</p>
+  <p>掲載されている企業名・サービス名は各社の商標または登録商標です。当サイトとの提携関係はありません。</p>
+</footer>
+
+</body>
+</html>

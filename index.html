@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DebtLens — リボ払い・分割払い・後払いシミュレーター</title>
+<meta name="description" content="50社の金利に対応したリボ払い・分割払い・BNPL後払いシミュレーター。完済期間・利息総額・繰上返済効果を無料で計算。">
+<meta name="keywords" content="リボ払い シミュレーション, 分割払い 計算, BNPL 手数料, 借金 返済 計算">
+<link rel="canonical" href="https://yuuki1210mochi-collab.github.io/debtlens/">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DebtLens",
+  "description": "リボ払い・分割払い・後払い(BNPL)の返済シミュレーター",
+  "url": "https://yuuki1210mochi-collab.github.io/debtlens/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "author": { "@type": "Organization", "name": "DebtLens" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "リボ払いの利息はどのように計算されますか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "リボ払いの利息は「未払い残高 × 月利（年率÷12）」で毎月計算されます。年率15%の場合、月利は約1.25%です。残高30万円なら月々の利息は約3,750円になります。" }
+    },
+    {
+      "@type": "Question",
+      "name": "リボ払いと分割払いはどちらがお得ですか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "同じ年率・同じ期間なら分割払いのほうが手数料が少なくなる傾向があります。ただし、リボ払いで月額を高めに設定すれば分割より有利になるケースもあります。DebtLensの「リボvs分割」タブで比較できます。" }
+    },
+    {
+      "@type": "Question",
+      "name": "Paidyの月3.5%は年率に換算するとどのくらいですか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "単純に12倍すると年42%になりますが、これはあくまで参考値です。Paidyの分割手数料とクレジットカードの実質年率は計算方法が異なるため、単純比較はできません。" }
+    },
+    {
+      "@type": "Question",
+      "name": "このツールは無料で使えますか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "はい、完全無料です。会員登録やアプリのダウンロードも不要で、ブラウザからすぐにご利用いただけます。計算はすべてお使いの端末上で行われ、入力データがサーバーに送信されることはありません。" }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- Data Warning Banner -->
+<div id="data-warning" class="box box-yellow" style="display:none;max-width:var(--max-w);margin:10px auto;padding:10px 16px;font-size:12px"></div>
+
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html">
+    <div class="site-logo">D</div>
+    <div>
+      <div class="site-title">DebtLens</div>
+      <div class="site-tagline">数字は正直に、言葉は優しく</div>
+    </div>
+  </a>
+</header>
+
+<!-- Hero -->
+<section style="max-width:var(--max-w);margin:20px auto 0;padding:0 20px">
+  <h1 style="font-size:22px;font-weight:800;letter-spacing:-0.02em;line-height:1.4">あなたのリボ、あといくら？</h1>
+  <p style="font-size:14px;color:var(--c-gray-500);margin-top:4px">50社の金利に対応。完済期間・利息合計・繰上返済効果を即計算。</p>
+</section>
+
+<!-- Tab Bar -->
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="ribo">🔄 リボ払い</button>
+  <button class="tab-btn" data-tab="installment">📅 分割払い</button>
+  <button class="tab-btn" data-tab="compare">⚖️ リボvs分割</button>
+  <button class="tab-btn" data-tab="bnpl">📱 後払い</button>
+  <button class="tab-btn" data-tab="multi">📊 複数借入</button>
+</nav>
+
+<!-- Panels -->
+<main style="max-width:var(--max-w);margin:16px auto;padding:0 16px">
+
+  <!-- ═══ TAB 1: リボ払い ═══ -->
+  <div class="tab-panel fade-in" id="panel-ribo">
+    <div class="company-selector">
+      <div class="company-selector-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/><path d="M3 21h18"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M9 15h1"/><path d="M14 7h1"/><path d="M14 11h1"/><path d="M14 15h1"/></svg>
+        金融機関から選ぶ
+      </div>
+      <div class="company-selector-row">
+        <div class="custom-select-wrap">
+          <select class="custom-select" data-field="company-category" onchange="filterCompanyDropdown(this)">
+            <option value="">カテゴリ</option>
+            <option value="consumer">🏦 消費者金融</option>
+            <option value="credit">💳 クレジットカード</option>
+            <option value="bank">🏛️ 銀行カードローン</option>
+          </select>
+        </div>
+        <div class="custom-select-wrap">
+          <select class="custom-select" data-field="company-name" onchange="selectCompanyFromDropdown(this)">
+            <option value="">会社を選択</option>
+          </select>
+        </div>
+      </div>
+      <div class="selected-rate-display"></div>
+    </div>
+    <div class="company-search" style="position:relative">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="会社名で検索（例：楽天、アコム）">
+      </div>
+      <div class="search-dropdown" style="display:none"></div>
+    </div>
+
+    <div class="seg-ctrl" style="margin-bottom:16px">
+      <button class="seg-btn active" data-method="ganri" onclick="this.parentElement.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');calculate()">元利定額</button>
+      <button class="seg-btn" data-method="gankin" onclick="this.parentElement.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');calculate()">元金定額</button>
+      <button class="seg-btn" data-method="slide" onclick="this.parentElement.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');calculate()">残高スライド</button>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="slider-group">
+        <div class="row"><label>利用残高</label><div>¥ <input type="number" class="num-input" data-field="balance" value="300000" min="10000" max="5000000" step="10000"></div></div>
+        <input type="range" data-slider="balance" min="10000" max="5000000" step="10000" value="300000">
+      </div>
+      <div class="slider-group">
+        <div class="row"><label>毎月返済額</label><div>¥ <input type="number" class="num-input" data-field="monthly" value="10000" min="1000" max="200000" step="1000"></div></div>
+        <input type="range" data-slider="monthly" min="1000" max="200000" step="1000" value="10000">
+      </div>
+      <div class="slider-group">
+        <div class="row"><label>年率</label><div><input type="number" class="num-input" data-field="rate" value="15.0" min="1" max="20" step="0.1"> %</div></div>
+        <input type="range" data-slider="rate" min="1" max="20" step="0.1" value="15.0">
+      </div>
+      <div class="slider-group">
+        <div class="row"><label>返済開始月</label></div>
+        <div class="month-input-wrap">
+          <svg class="month-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <input type="month" data-field="start-date" class="styled-month">
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <button onclick="toggleReverse()" style="padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--c-gray-200);background:#fff;cursor:pointer;font-size:12px;color:var(--c-gray-600)">🔄 逆算モード</button>
+    </div>
+
+    <div id="reverse-section" style="display:none" class="box box-green">
+      <label style="font-size:12px;color:var(--c-gray-500)">目標完済月数</label>
+      <input type="number" id="reverse-months" value="24" min="1" max="120" class="num-input" style="margin:8px 0" oninput="calcReversePay()">
+      <span style="font-size:12px;color:var(--c-gray-500)">ヶ月</span>
+      <div id="reverse-result" style="margin-top:8px;font-size:14px;font-weight:600;color:var(--c-green-600)"></div>
+    </div>
+
+    <div class="ribo-results"></div>
+  </div>
+
+  <!-- ═══ TAB 2: 分割払い ═══ -->
+  <div class="tab-panel" id="panel-installment" style="display:none">
+    <div class="company-selector">
+      <div class="company-selector-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/><path d="M3 21h18"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M9 15h1"/><path d="M14 7h1"/><path d="M14 11h1"/><path d="M14 15h1"/></svg>
+        金融機関から選ぶ
+      </div>
+      <div class="company-selector-row">
+        <div class="custom-select-wrap">
+          <select class="custom-select" data-field="company-category" onchange="filterCompanyDropdown(this)">
+            <option value="">カテゴリ</option>
+            <option value="consumer">🏦 消費者金融</option>
+            <option value="credit">💳 クレジットカード</option>
+            <option value="bank">🏛️ 銀行カードローン</option>
+          </select>
+        </div>
+        <div class="custom-select-wrap">
+          <select class="custom-select" data-field="company-name" onchange="selectCompanyFromDropdown(this)">
+            <option value="">会社を選択</option>
+          </select>
+        </div>
+      </div>
+      <div class="selected-rate-display"></div>
+    </div>
+    <div class="company-search" style="position:relative">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="会社名で検索">
+      </div>
+      <div class="search-dropdown" style="display:none"></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="slider-group">
+        <div class="row"><label>利用金額</label><div>¥ <input type="number" class="num-input" data-field="amount" value="300000" min="10000" max="5000000" step="10000"></div></div>
+        <input type="range" data-slider="amount" min="10000" max="5000000" step="10000" value="300000">
+      </div>
+      <div class="slider-group">
+        <div class="row"><label>年率</label><div><input type="number" class="num-input" data-field="rate" value="15.0" min="1" max="20" step="0.1"> %</div></div>
+        <input type="range" data-slider="rate" min="1" max="20" step="0.1" value="15.0">
+      </div>
+    </div>
+    <div class="installment-results"></div>
+    <div class="box box-gray" style="font-size:11px;color:var(--c-gray-500)">※ 実質年率による計算結果です。実際の手数料は各カード会社の規約をご確認ください。</div>
+  </div>
+
+  <!-- ═══ TAB 3: リボ vs 分割 ═══ -->
+  <div class="tab-panel" id="panel-compare" style="display:none">
+    <div class="company-selector">
+      <div class="company-selector-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/><path d="M3 21h18"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M9 15h1"/><path d="M14 7h1"/><path d="M14 11h1"/><path d="M14 15h1"/></svg>
+        金融機関から選ぶ
+      </div>
+      <div class="company-selector-row">
+        <div class="custom-select-wrap">
+          <select class="custom-select" data-field="company-category" onchange="filterCompanyDropdown(this)">
+            <option value="">カテゴリ</option>
+            <option value="consumer">🏦 消費者金融</option>
+            <option value="credit">💳 クレジットカード</option>
+            <option value="bank">🏛️ 銀行カードローン</option>
+          </select>
+        </div>
+        <div class="custom-select-wrap">
+          <select class="custom-select" data-field="company-name" onchange="selectCompanyFromDropdown(this)">
+            <option value="">会社を選択</option>
+          </select>
+        </div>
+      </div>
+      <div class="selected-rate-display"></div>
+    </div>
+    <div class="company-search" style="position:relative">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="会社名で検索">
+      </div>
+      <div class="search-dropdown" style="display:none"></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="slider-group">
+        <div class="row"><label>利用金額</label><div>¥ <input type="number" class="num-input" data-field="amount" value="300000" min="10000" max="5000000" step="10000"></div></div>
+        <input type="range" data-slider="amount" min="10000" max="5000000" step="10000" value="300000">
+      </div>
+      <div class="slider-group">
+        <div class="row"><label>年率</label><div><input type="number" class="num-input" data-field="rate" value="15.0" min="1" max="20" step="0.1"> %</div></div>
+        <input type="range" data-slider="rate" min="1" max="20" step="0.1" value="15.0">
+      </div>
+      <div class="slider-group">
+        <div class="row"><label>リボ月額返済</label><div>¥ <input type="number" class="num-input" data-field="ribo-monthly" value="10000" min="1000" max="200000" step="1000"></div></div>
+        <input type="range" data-slider="ribo-monthly" min="1000" max="200000" step="1000" value="10000">
+      </div>
+      <div class="slider-group">
+        <div class="row"><label>分割回数</label><div><input type="number" class="num-input" data-field="installments" value="24" min="2" max="60" step="1"> 回</div></div>
+        <input type="range" data-slider="installments" min="2" max="60" step="1" value="24">
+      </div>
+    </div>
+    <div class="compare-results"></div>
+  </div>
+
+  <!-- ═══ TAB 4: BNPL ═══ -->
+  <div class="tab-panel" id="panel-bnpl" style="display:none">
+    <div class="seg-ctrl" style="margin-bottom:16px">
+      <button class="seg-btn active" data-service="paidy6" onclick="this.parentElement.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');calculate()">Paidy 6回</button>
+      <button class="seg-btn" data-service="paidy12" onclick="this.parentElement.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');calculate()">Paidy 12回</button>
+      <button class="seg-btn" data-service="paidy1" onclick="this.parentElement.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');calculate()">Paidy 翌月</button>
+      <button class="seg-btn" data-service="merpay" onclick="this.parentElement.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');calculate()">メルペイ定額</button>
+    </div>
+    <div class="slider-group" style="margin-bottom:16px">
+      <div class="row"><label>利用金額</label><div>¥ <input type="number" class="num-input" data-field="amount" value="50000" min="1000" max="1000000" step="1000"></div></div>
+      <input type="range" data-slider="amount" min="1000" max="1000000" step="1000" value="50000">
+    </div>
+    <div class="bnpl-results"></div>
+    <div class="box box-gray" style="font-size:11px;color:var(--c-gray-500)">※ Paidyの手数料は月3.5%の分割手数料です。メルペイ定額払いは年率15.0%のリボ方式です。</div>
+  </div>
+
+  <!-- ═══ TAB 5: 複数借入 ═══ -->
+  <div class="tab-panel" id="panel-multi" style="display:none">
+    <div class="result-grid mb-16">
+      <div class="result-card"><div class="label">借入総額</div><div class="value multi-total-balance">—</div></div>
+      <div class="result-card"><div class="label">月々合計</div><div class="value multi-total-monthly">—</div></div>
+      <div class="result-card warn"><div class="label">利息合計</div><div class="value multi-total-interest">—</div></div>
+      <div class="result-card accent"><div class="label">全完済まで</div><div class="value multi-total-months">—</div></div>
+    </div>
+    <div id="multi-debts"></div>
+    <button onclick="addDebt()" style="width:100%;padding:12px;border-radius:12px;border:2px dashed var(--c-gray-300);background:transparent;cursor:pointer;font-size:14px;color:var(--c-gray-500);font-weight:500;margin-top:10px">+ 借入を追加</button>
+  </div>
+
+</main>
+
+<!-- FAQ -->
+<section style="max-width:var(--max-w);margin:40px auto;padding:0 20px" id="faq">
+  <h2 style="font-size:18px;font-weight:700;margin-bottom:16px">よくある質問</h2>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">リボ払いの利息はどのように計算されますか？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">未払い残高に月利（年率÷12）を掛けて毎月計算されます。年率15%なら月利は約1.25%で、残高30万円の場合は月々約3,750円の利息が発生します。</p>
+  </details>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">入力した借金の金額は保存されますか？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">いいえ。すべての計算はお使いの端末上（ブラウザ内）で処理され、入力データがサーバーに送信されることはありません。ページを閉じるとデータは消去されます。</p>
+  </details>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">金利データはいつ更新されていますか？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">金利データの最終更新日はページ下部に表示しています。データは各社公式サイトの上限金利をもとに手動で更新しています。90日以上未更新の場合は警告が表示されます。</p>
+  </details>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">元利定額・元金定額・残高スライドの違いは？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">元利定額は毎月の支払い額が一定。元金定額は元金返済分が一定で利息が上乗せ。残高スライドは残高に応じて最低支払い額が変動します。詳しくは<a href="ribo-shikumi.html">リボ払いの仕組みコラム</a>をご覧ください。</p>
+  </details>
+</section>
+
+<!-- Content Links -->
+<section style="max-width:var(--max-w);margin:30px auto;padding:0 20px" id="columns">
+  <h2 style="font-size:16px;font-weight:700;margin-bottom:14px">コラム・ガイド</h2>
+  <div class="related-list">
+    <a href="ribo-shikumi.html" class="related-card"><div class="related-icon">🔄</div><div class="related-info"><span>リボ払いの仕組み</span><small>利息構造・3つの方式・追加利用の落とし穴</small></div></a>
+    <a href="ribo-vs-bunkatsu.html" class="related-card"><div class="related-icon">⚖️</div><div class="related-info"><span>リボ払いと分割払いの違い</span><small>7項目で比較。コスト差と適性</small></div></a>
+    <a href="bnpl-chuiten.html" class="related-card"><div class="related-icon">📱</div><div class="related-info"><span>後払い・BNPLの注意点</span><small>Paidy・メルペイの手数料を実数値で解説</small></div></a>
+    <a href="kuriage-hensai.html" class="related-card"><div class="related-icon">🚀</div><div class="related-info"><span>繰上返済のコツ</span><small>少額でも早く返す効果を計算で確認</small></div></a>
+    <a href="tasaju-saimu.html" class="related-card"><div class="related-icon">🏔️</div><div class="related-info"><span>多重債務の返済戦略</span><small>雪だるま方式と雪崩方式の比較</small></div></a>
+    <a href="credit-kihon.html" class="related-card"><div class="related-icon">💳</div><div class="related-info"><span>クレジットカード金利の基本</span><small>年率・日割計算・締め日と支払日の関係</small></div></a>
+    <a href="guide.html" class="related-card"><div class="related-icon">📘</div><div class="related-info"><span>使い方ガイド</span><small>5タブの操作方法・計算結果の読み方</small></div></a>
+    <a href="glossary.html" class="related-card"><div class="related-icon">📖</div><div class="related-info"><span>金融用語集（18語）</span><small>リボ・分割・BNPL関連の用語解説</small></div></a>
+    <a href="examples.html" class="related-card"><div class="related-icon">📊</div><div class="related-info"><span>シミュレーション例</span><small>30万・50万・100万円の3シナリオ</small></div></a>
+  </div>
+</section>
+
+<!-- News -->
+<section style="max-width:var(--max-w);margin:30px auto;padding:0 20px" class="news-section">
+  <h2>📰 金融関連ニュース</h2>
+  <div id="news-widget"></div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <nav class="footer-links">
+    <a href="index.html">ホーム</a>
+    <a href="guide.html">使い方ガイド</a>
+    <a href="glossary.html">用語集</a>
+    <a href="examples.html">シミュレーション例</a>
+    <a href="privacy.html">プライバシーポリシー</a>
+    <a href="about.html">運営者情報</a>
+    <a href="trademarks.html">商標について</a>
+  </nav>
+  <p id="data-updated" style="font-size:11px;color:var(--c-gray-400);margin-bottom:8px"></p>
+  <p>© 2026 DebtLens — 本サイトは情報提供を目的としており金融アドバイスではありません。</p>
+  <p>掲載されている企業名・サービス名は各社の商標または登録商標です。当サイトとの提携関係はありません。</p>
+</footer>
+
+<script src="app.js"></script>
+<script src="news.js"></script>
+<script src="consent.js"></script>
+</body>
+</html>
