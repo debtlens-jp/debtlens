@@ -507,3 +507,129 @@ button { font-family: inherit; }
   border-color: var(--c-green-500);
   box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
 }
+
+/* ── Dark Mode ── */
+[data-theme="dark"] {
+  --c-gray-50: #1a1d2e;
+  --c-gray-100: #22253a;
+  --c-gray-200: #2d3148;
+  --c-gray-300: #3d4260;
+  --c-gray-400: #6b7194;
+  --c-gray-500: #9ca0b8;
+  --c-gray-600: #c0c4d8;
+  --c-gray-800: #e8eaf0;
+  --c-green-50: rgba(5,150,105,0.1);
+  --c-green-100: rgba(5,150,105,0.15);
+  --c-yellow-50: rgba(251,191,36,0.08);
+  --c-yellow-200: rgba(251,191,36,0.2);
+  --c-red-50: rgba(248,113,113,0.08);
+  --c-red-200: rgba(248,113,113,0.15);
+  --c-blue-50: rgba(37,99,235,0.08);
+  --c-blue-200: rgba(37,99,235,0.15);
+}
+[data-theme="dark"] body {
+  background: linear-gradient(180deg, #0c0f1a 0%, #141828 30%);
+  color: #e8eaf0;
+}
+[data-theme="dark"] .search-bar,
+[data-theme="dark"] .custom-select,
+[data-theme="dark"] .styled-month,
+[data-theme="dark"] .mini-input,
+[data-theme="dark"] .num-input {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+  color: #e8eaf0;
+}
+[data-theme="dark"] .search-dropdown {
+  background: rgba(20,24,40,0.98);
+  border-color: rgba(255,255,255,0.1);
+}
+[data-theme="dark"] .seg-btn,
+[data-theme="dark"] .tab-btn,
+[data-theme="dark"] button[onclick*="toggle"],
+[data-theme="dark"] button[onclick*="share"],
+[data-theme="dark"] button[onclick*="save"] {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+  color: #9ca0b8;
+}
+[data-theme="dark"] .seg-btn.active {
+  background: #fff;
+  color: var(--c-gray-800);
+}
+[data-theme="dark"] .tab-btn.active {
+  background: var(--c-green-500);
+  color: #fff;
+}
+[data-theme="dark"] .result-card,
+[data-theme="dark"] .chart-container,
+[data-theme="dark"] .box,
+[data-theme="dark"] .company-selector {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.07);
+}
+[data-theme="dark"] .result-card.accent {
+  background: rgba(5,150,105,0.08);
+  border-color: rgba(5,150,105,0.15);
+}
+[data-theme="dark"] .result-card.warn {
+  background: rgba(248,113,113,0.06);
+  border-color: rgba(248,113,113,0.12);
+}
+[data-theme="dark"] .table-wrap {
+  border-color: rgba(255,255,255,0.07);
+}
+[data-theme="dark"] .table-wrap th {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+  color: var(--c-gray-500);
+}
+[data-theme="dark"] .table-wrap td {
+  border-color: rgba(255,255,255,0.04);
+}
+[data-theme="dark"] details summary {
+  color: #e8eaf0;
+}
+[data-theme="dark"] .site-footer {
+  border-color: rgba(255,255,255,0.04);
+}
+[data-theme="dark"] .cookie-banner,
+[data-theme="dark"] .disclaimer-banner {
+  background: rgba(12,15,26,0.95);
+  border-color: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] a { color: var(--c-green-500); }
+[data-theme="dark"] .related-card {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .related-card:hover { border-color: var(--c-green-500); }
+[data-theme="dark"] .cta-block {
+  background: rgba(5,150,105,0.08);
+  border-color: rgba(5,150,105,0.15);
+}
+[data-theme="dark"] #dark-toggle { color: #e8eaf0; border-color: rgba(255,255,255,0.1); }
+
+/* ── Enhanced Animations ── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeScale {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.fade-in { animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.result-card { animation: fadeScale 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+.result-card:nth-child(2) { animation-delay: 0.06s; animation-fill-mode: both; }
+.result-card:nth-child(3) { animation-delay: 0.12s; animation-fill-mode: both; }
+.chart-container { animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
+.tab-btn { transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+.tab-btn:active { transform: scale(0.95); }
+.related-card { transition: all 0.2s ease; }
+.related-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+details { transition: all 0.2s ease; }
+details[open] summary { color: var(--c-green-600); }
+.seg-btn { transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+.cta-block .cta-btn { transition: all 0.25s ease; }
+.cta-block .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34,197,94,0.3); }

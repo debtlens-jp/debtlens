@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>借入診断チェックリスト｜あなたの返済状況は安全？｜DebtLens</title>
+<meta name="description" content="10問のチェックリストであなたの借入状況を診断。安全・注意・要対策の3段階で判定し、状況に応じた具体的なアクションを提案します。">
+<meta property="og:title" content="借入診断チェックリスト｜DebtLens"><meta property="og:image" content="https://debtlens-jp.github.io/debtlens/ogp.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://debtlens-jp.github.io/debtlens/shindan.html">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><a href="index.html"><div class="site-logo">D</div><div><div class="site-title">DebtLens</div><div class="site-tagline">数字は正直に、言葉は優しく</div></div></a></header>
+<nav class="breadcrumb"><a href="index.html">ホーム</a> ＞ 借入診断チェックリスト</nav>
+<article class="content article">
+<h1>借入診断チェックリスト<br><small style="font-size:14px;color:var(--c-gray-500);font-weight:400">── あなたの返済状況は安全？</small></h1>
+<div class="article-meta"><span>📅 2026年3月22日</span><span>🕐 所要時間 2分</span></div>
+
+<p>以下の10問にチェックを入れてください。当てはまる数であなたの借入状況を診断します。</p>
+
+<div id="checklist" style="margin:24px 0">
+<style>
+.check-item { display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid var(--c-gray-100);cursor:pointer;transition:background 0.15s; }
+.check-item:hover { background:var(--c-gray-50); }
+.check-item input { margin-top:3px;width:18px;height:18px;accent-color:var(--c-green-500);cursor:pointer;flex-shrink:0; }
+.check-item label { font-size:14px;color:var(--c-gray-800);cursor:pointer;line-height:1.6; }
+.check-item.checked { background:rgba(239,68,68,0.04); }
+.check-item.checked label { color:var(--c-red-600); }
+</style>
+
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q1" onchange="updateDiagnosis()">
+<label for="q1">リボ払いの残高が今いくらあるか正確に把握していない</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q2" onchange="updateDiagnosis()">
+<label for="q2">毎月の返済額が1万円以下に設定されている</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q3" onchange="updateDiagnosis()">
+<label for="q3">リボ払いで返済しながら、同じカードで買い物を続けている</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q4" onchange="updateDiagnosis()">
+<label for="q4">複数のクレジットカードやローンで借入がある</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q5" onchange="updateDiagnosis()">
+<label for="q5">BNPLサービス（Paidy・メルペイ等）の後払いも利用している</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q6" onchange="updateDiagnosis()">
+<label for="q6">借入の返済のために別の借入をしたことがある</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q7" onchange="updateDiagnosis()">
+<label for="q7">月の手取り収入の3分の1以上が返済に消えている</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q8" onchange="updateDiagnosis()">
+<label for="q8">返済の延滞（支払い遅れ）をしたことがある</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q9" onchange="updateDiagnosis()">
+<label for="q9">クレジットカードの利用明細を毎月確認していない</label>
+</div>
+<div class="check-item" onclick="this.querySelector('input').click()">
+<input type="checkbox" id="q10" onchange="updateDiagnosis()">
+<label for="q10">完済までにあと何ヶ月かかるか計算したことがない</label>
+</div>
+</div>
+
+<div id="diagnosis-result" style="margin:24px 0"></div>
+
+<script>
+function updateDiagnosis() {
+  const checks = document.querySelectorAll('#checklist input[type=checkbox]');
+  let count = 0;
+  checks.forEach(c => {
+    const item = c.closest('.check-item');
+    if (c.checked) { count++; item.classList.add('checked'); }
+    else { item.classList.remove('checked'); }
+  });
+
+  const el = document.getElementById('diagnosis-result');
+  if (count === 0) { el.innerHTML = ''; return; }
+
+  let level, color, bgColor, borderColor, title, message, actions;
+
+  if (count <= 2) {
+    level = 'safe'; color = '#22c55e'; bgColor = 'rgba(34,197,94,0.06)'; borderColor = 'rgba(34,197,94,0.15)';
+    title = '✅ 安全圏（' + count + '/10）';
+    message = '現時点では大きな問題はなさそうです。引き続き計画的な返済を心がけてください。';
+    actions = `
+      <p style="font-size:13px;margin:4px 0">→ <a href="index.html">シミュレーター</a>で完済時期を確認しておくとさらに安心です</p>
+      <p style="font-size:13px;margin:4px 0">→ <a href="kuriage-hensai.html">繰上返済のコツ</a>で利息をさらに節約</p>`;
+  } else if (count <= 5) {
+    level = 'caution'; color = '#f59e0b'; bgColor = 'rgba(245,158,11,0.06)'; borderColor = 'rgba(245,158,11,0.15)';
+    title = '⚠️ 注意（' + count + '/10）';
+    message = '改善の余地があります。特にリボ残高の把握と返済額の見直しが重要です。';
+    actions = `
+      <p style="font-size:13px;margin:4px 0">→ <a href="index.html">シミュレーター</a>で現在の残高を入力し、完済計画を立てましょう</p>
+      <p style="font-size:13px;margin:4px 0">→ <a href="ribo-jigoku.html">リボ地獄から抜け出す5つの方法</a>を読む</p>
+      <p style="font-size:13px;margin:4px 0">→ 返済額の増額を検討してください</p>
+      <div style="margin-top:12px;padding:12px 16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px">
+        <p style="font-size:12px;color:#888;margin:0 0 6px">【広告】家計の見直しをプロに無料相談</p>
+        <a href="#" rel="sponsored" style="font-size:13px;font-weight:700;color:#22c55e">FPに無料相談する →</a>
+      </div>`;
+  } else {
+    level = 'danger'; color = '#ef4444'; bgColor = 'rgba(239,68,68,0.06)'; borderColor = 'rgba(239,68,68,0.15)';
+    title = '🚨 要対策（' + count + '/10）';
+    message = '早めの対策が必要な状態です。1人で抱え込まず、専門家に相談することを強くおすすめします。';
+    actions = `
+      <p style="font-size:13px;margin:4px 0">→ <a href="index.html">シミュレーター</a>で正確な完済時期を把握してください</p>
+      <p style="font-size:13px;margin:4px 0">→ <a href="tasaju-saimu.html">多重債務の返済戦略</a>を確認</p>
+      <p style="font-size:13px;margin:4px 0">→ まずは追加利用を止め、返済に集中しましょう</p>
+      <div style="margin-top:12px;padding:14px 16px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px">
+        <p style="font-size:13px;font-weight:600;color:#ef4444;margin:0 0 4px">専門家への相談を強くおすすめします</p>
+        <p style="font-size:12px;color:#888;margin:0 0 8px">【広告】返済計画の見直しをFPに無料で相談できます</p>
+        <a href="#" rel="sponsored" style="display:inline-block;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料でFPに相談する →</a>
+      </div>
+      <div style="margin-top:10px;padding:12px 16px;background:var(--c-gray-50);border:1px solid var(--c-gray-200);border-radius:10px">
+        <p style="font-size:12px;color:#888;margin:0"><strong>無料の公的相談窓口：</strong><br>消費者ホットライン: 188 ／ 法テラス: 0570-078374</p>
+      </div>`;
+  }
+
+  el.innerHTML = `
+    <div style="background:${bgColor};border:1.5px solid ${borderColor};border-radius:16px;padding:20px 22px;animation:fadeScale 0.4s ease">
+      <div style="font-size:18px;font-weight:700;color:${color};margin-bottom:10px">${title}</div>
+      <p style="font-size:14px;color:var(--c-gray-600);margin:0 0 14px;line-height:1.7">${message}</p>
+      <div style="border-top:1px solid ${borderColor};padding-top:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--c-gray-500);margin-bottom:8px">おすすめのアクション</div>
+        ${actions}
+      </div>
+    </div>`;
+}
+</script>
+
+<h2>診断結果について</h2>
+<p>この診断は一般的な目安であり、個別の状況を正確に判定するものではありません。チェック数が少なくても不安がある場合は、早めに専門家に相談することをおすすめします。</p>
+<p>返済状況に応じた具体的な返済計画は、DebtLensのシミュレーターで計算できます。</p>
+
+<div class="cta-block"><p style="font-size:14px;margin-bottom:14px;color:var(--c-gray-800)">あなたの残高で完済計画を立てよう</p><a href="index.html" class="cta-btn">DebtLens で計算する →</a></div>
+
+<nav class="related"><h2>関連ページ</h2><div class="related-list">
+<a href="ribo-jigoku.html" class="related-card"><div class="related-icon">🆘</div><div class="related-info"><span>リボ地獄から抜け出す5つの方法</span><small>今日からできる具体策</small></div></a>
+<a href="tasaju-saimu.html" class="related-card"><div class="related-icon">🏔️</div><div class="related-info"><span>多重債務の返済戦略</span><small>雪だるま方式と雪崩方式</small></div></a>
+<a href="20dai-shippai.html" class="related-card"><div class="related-icon">💸</div><div class="related-info"><span>20代のお金の失敗あるある</span><small>リボ・BNPL・サブスクの落とし穴</small></div></a>
+</div></nav>
+</article>
+<footer class="site-footer"><nav class="footer-links"><a href="index.html">ホーム</a><a href="guide.html">使い方ガイド</a><a href="glossary.html">用語集</a><a href="privacy.html">プライバシーポリシー</a><a href="about.html">運営者情報</a></nav><p>© 2026 DebtLens</p></footer>
+</body></html>

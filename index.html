@@ -2,11 +2,33 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DebtLens — リボ払い・分割払い・後払いシミュレーター</title>
-<meta name="description" content="50社の金利に対応したリボ払い・分割払い・BNPL後払いシミュレーター。完済期間・利息総額・繰上返済効果を無料で計算。">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#059669">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DebtLens">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>DebtLens — リボ払い・分割払い・後払いシミュレーター｜50社対応・無料</title>
+<meta name="description" content="50社の金利に対応したリボ払い・分割払い・BNPL後払いシミュレーター。完済期間・利息総額・繰上返済効果を無料で即計算。会員登録不要。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DebtLens — リボ払い・分割払い・後払いシミュレーター｜50社対応・無料">
+<meta property="og:description" content="50社の金利に対応したリボ払い・分割払い・BNPL後払いシミュレーター。完済期間・利息総額・繰上返済効果を無料で即計算。会員登録不要。">
+<meta property="og:url" content="https://debtlens-jp.github.io/debtlens/">
+<meta property="og:image" content="https://debtlens-jp.github.io/debtlens/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="DebtLens">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DebtLens — リボ払い・分割払い・後払いシミュレーター｜50社対応・無料">
+<meta name="twitter:description" content="50社の金利に対応したリボ払い・分割払い・BNPL後払いシミュレーター。完済期間・利息総額・繰上返済効果を無料で即計算。会員登録不要。">
+<meta name="twitter:image" content="https://debtlens-jp.github.io/debtlens/ogp.png">
 <meta name="keywords" content="リボ払い シミュレーション, 分割払い 計算, BNPL 手数料, 借金 返済 計算">
-<link rel="canonical" href="https://yuuki1210mochi-collab.github.io/debtlens/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+<link rel="canonical" href="https://debtlens-jp.github.io/debtlens/">
 <link rel="stylesheet" href="style.css">
 <script type="application/ld+json">
 {
@@ -14,7 +36,7 @@
   "@type": "WebApplication",
   "name": "DebtLens",
   "description": "リボ払い・分割払い・後払い(BNPL)の返済シミュレーター",
-  "url": "https://yuuki1210mochi-collab.github.io/debtlens/",
+  "url": "https://debtlens-jp.github.io/debtlens/",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Web",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
@@ -49,6 +71,39 @@
   ]
 }
 </script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "メルペイスマート払いの定額払いとリボ払いの違いは？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "メルペイスマート払いの「定額払い」は年率15.0%のリボルビング方式で、クレジットカードのリボ払いと同じ仕組みです。翌月一括払いなら手数料は無料です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "リボ払いの残高が減らないのはなぜですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "毎月の返済額のうち、利息分が差し引かれた残りしか元金返済に充てられないためです。年率15%で残高30万円の場合、月々の利息は約3,750円で、月1万円返済でも元金は6,250円しか減りません。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "繰上返済すると利息はどのくらい減りますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "残高30万円・年率15%・月1万円返済の場合、月5,000円の追加返済で利息を約31,000円（約44%）節約できます。繰上返済は残高が大きいうちほど効果が大きくなります。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -64,6 +119,7 @@
       <div class="site-tagline">数字は正直に、言葉は優しく</div>
     </div>
   </a>
+  <button id="dark-toggle" onclick="toggleDarkMode()" style="margin-left:auto;padding:6px 10px;border-radius:8px;border:1px solid var(--c-gray-200);background:transparent;cursor:pointer;font-size:14px" title="ダークモード切替">🌙</button>
 </header>
 
 <!-- Hero -->
@@ -304,6 +360,22 @@
     <summary style="cursor:pointer;font-size:14px;font-weight:600">元利定額・元金定額・残高スライドの違いは？</summary>
     <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">元利定額は毎月の支払い額が一定。元金定額は元金返済分が一定で利息が上乗せ。残高スライドは残高に応じて最低支払い額が変動します。詳しくは<a href="ribo-shikumi.html">リボ払いの仕組みコラム</a>をご覧ください。</p>
   </details>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">メルペイスマート払いの定額払いとリボ払いの違いは？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">メルペイスマート払いの「定額払い」は年率15.0%のリボルビング方式で、クレジットカードのリボ払いと同じ仕組みです。翌月一括払いなら手数料は無料です。詳しくは<a href="bnpl-chuiten.html">BNPL注意点コラム</a>をご覧ください。</p>
+  </details>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">リボ払いの残高が減らないのはなぜ？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">毎月の返済額から利息分が差し引かれ、残りしか元金に充てられないためです。年率15%・残高30万円の場合、月々の利息は約3,750円。月1万円返済でも元金は6,250円しか減りません。<a href="ribo-shikumi.html">リボ払いの仕組みコラム</a>で詳しく解説しています。</p>
+  </details>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">繰上返済すると利息はどのくらい減る？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">残高30万円・月1万円返済に月5,000円を追加すると、利息を約31,000円（約44%）節約できます。<a href="kuriage-hensai.html">繰上返済のコツ</a>で金額別の効果を掲載しています。</p>
+  </details>
+  <details style="border-bottom:1px solid var(--c-gray-100);padding:14px 0">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600">Paidyの手数料は高い？クレジットカードと比べると？</summary>
+    <p style="font-size:13px;color:var(--c-gray-600);margin-top:8px">Paidyの6回分割では元金の21%が手数料になります。クレジットカード分割（年率15%・6回）の手数料は約4%なので、約5倍の差があります。ただしPaidyの翌月一括払いは手数料無料です。<a href="bnpl-chuiten.html">詳しい比較はこちら</a>。</p>
+  </details>
 </section>
 
 <!-- Content Links -->
@@ -316,10 +388,38 @@
     <a href="kuriage-hensai.html" class="related-card"><div class="related-icon">🚀</div><div class="related-info"><span>繰上返済のコツ</span><small>少額でも早く返す効果を計算で確認</small></div></a>
     <a href="tasaju-saimu.html" class="related-card"><div class="related-icon">🏔️</div><div class="related-info"><span>多重債務の返済戦略</span><small>雪だるま方式と雪崩方式の比較</small></div></a>
     <a href="credit-kihon.html" class="related-card"><div class="related-icon">💳</div><div class="related-info"><span>クレジットカード金利の基本</span><small>年率・日割計算・締め日と支払日の関係</small></div></a>
+    <a href="ribo-jigoku.html" class="related-card"><div class="related-icon">🆘</div><div class="related-info"><span>リボ地獄から抜け出す5つの方法</span><small>今日からできる具体策</small></div></a>
+    <a href="20dai-shippai.html" class="related-card"><div class="related-icon">💸</div><div class="related-info"><span>20代のお金の失敗あるある</span><small>リボ・BNPL・サブスクの落とし穴</small></div></a>
+    <a href="ikkatsu-vs-bunkatsu.html" class="related-card"><div class="related-icon">🤔</div><div class="related-info"><span>一括返済と分割返済どっちがいい？</span><small>判断基準を数字で解説</small></div></a>
     <a href="guide.html" class="related-card"><div class="related-icon">📘</div><div class="related-info"><span>使い方ガイド</span><small>5タブの操作方法・計算結果の読み方</small></div></a>
     <a href="glossary.html" class="related-card"><div class="related-icon">📖</div><div class="related-info"><span>金融用語集（18語）</span><small>リボ・分割・BNPL関連の用語解説</small></div></a>
     <a href="examples.html" class="related-card"><div class="related-icon">📊</div><div class="related-info"><span>シミュレーション例</span><small>30万・50万・100万円の3シナリオ</small></div></a>
   </div>
+</section>
+
+<!-- Card Pages -->
+<section style="max-width:var(--max-w);margin:30px auto;padding:0 20px" id="cards">
+  <h2 style="font-size:16px;font-weight:700;margin-bottom:14px">カード会社別シミュレーション</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+    <a href="card-rakuten.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">楽天カード</a>
+    <a href="card-smbc.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">三井住友カード</a>
+    <a href="card-jcb.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">JCBカード</a>
+    <a href="card-epos.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">エポスカード</a>
+    <a href="card-dcard.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">dカード</a>
+    <a href="card-acom.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">アコム</a>
+    <a href="card-promise.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">プロミス</a>
+    <a href="card-aiful.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">アイフル</a>
+    <a href="card-mufg.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">三菱UFJ バンクイック</a>
+    <a href="card-mizuho.html" style="padding:8px 14px;border-radius:10px;border:1px solid var(--c-gray-200);font-size:13px;color:var(--c-gray-800);background:var(--c-gray-50);text-decoration:none;transition:all 0.2s">みずほ銀行</a>
+  </div>
+</section>
+
+<!-- Diagnosis -->
+<section style="max-width:var(--max-w);margin:30px auto;padding:0 20px">
+  <a href="shindan.html" style="display:block;padding:20px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(5,150,105,0.08),rgba(34,211,153,0.04));border:1px solid rgba(5,150,105,0.15);text-decoration:none;transition:all 0.2s">
+    <div style="font-size:18px;font-weight:700;color:var(--c-green-600);margin-bottom:6px">📋 借入診断チェックリスト</div>
+    <p style="font-size:13px;color:var(--c-gray-500);margin:0">10問のチェックで「安全・注意・要対策」を判定。あなたの状況に合った具体的なアクションを提案します。</p>
+  </a>
 </section>
 
 <!-- News -->
@@ -347,5 +447,10 @@
 <script src="app.js"></script>
 <script src="news.js"></script>
 <script src="consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
 </body>
 </html>

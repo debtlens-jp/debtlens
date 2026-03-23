@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三井住友カードのリボ払い・利息シミュレーション｜年率15.0%で計算｜DebtLens</title>
+<meta name="description" content="三井住友カード（年率15.0%）のリボ払い返済シミュレーション。完済期間・利息合計・繰上返済効果を無料で計算。月額別の返済比較表も掲載。">
+<meta property="og:title" content="三井住友カードのリボ払いシミュレーション｜DebtLens">
+<meta property="og:description" content="三井住友カード（年率15.0%）の完済期間と利息を即計算">
+<meta property="og:image" content="https://debtlens-jp.github.io/debtlens/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://debtlens-jp.github.io/debtlens/card-smbc.html">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"三井住友カードのリボ払い・利息シミュレーション","author":{"@type":"Organization","name":"DebtLens"},"datePublished":"2026-03-22"}
+</script>
+</head>
+<body>
+<header class="site-header"><a href="index.html"><div class="site-logo">D</div><div><div class="site-title">DebtLens</div><div class="site-tagline">数字は正直に、言葉は優しく</div></div></a></header>
+<nav class="breadcrumb"><a href="index.html">ホーム</a> ＞ カード別シミュレーション ＞ 三井住友カード</nav>
+<article class="content article">
+<h1>三井住友カードのリボ払いシミュレーション<br><small style="font-size:14px;color:var(--c-gray-500);font-weight:400">年率 15.0%（上限金利）｜クレジットカード</small></h1>
+<div class="article-meta"><span>📅 2026年3月22日</span><span>🕐 読了目安 3分</span></div>
+
+<div class="box box-gray">
+<div class="box-title">📋 三井住友カードの基本情報</div>
+<p style="font-size:13px;margin-bottom:6px"><strong>カテゴリ：</strong>クレジットカード</p>
+<p style="font-size:13px;margin-bottom:6px"><strong>リボ払い年率：</strong>15.0%（上限金利）</p>
+<p style="font-size:13px;margin:0">「マイ・ペイすリボ」が自動リボサービス。年会費割引のために設定している方が多いが、リボ手数料に注意。</p>
+</div>
+
+<h2>残高別シミュレーション（年率15.0%）</h2>
+<p>以下は三井住友カードの上限金利15.0%でリボ払いを続けた場合のシミュレーションです。実際の適用金利は審査結果により異なります。</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>残高</th><th>月1万円返済</th><th>月1.5万円返済</th><th>月2万円返済</th></tr></thead>
+<tbody id="card-sim-table"></tbody>
+</table></div>
+
+<div class="box box-yellow">
+<div class="box-title">⚠ 注意</div>
+<p style="font-size:13px;margin:0">上記は上限金利（15.0%）による概算です。実際の適用金利、手数料計算方法、締め日等は三井住友カードの公式サイトまたはカスタマーセンターでご確認ください。当サイトと三井住友カードの間に提携・推奨関係はありません。</p>
+</div>
+
+<h2>あなたの残高で計算する</h2>
+<p>三井住友カードの金利（15.0%）が自動設定された状態でシミュレーターを開けます。</p>
+<div class="cta-block">
+<p style="font-size:14px;margin-bottom:14px;color:var(--c-gray-800)">三井住友カードの返済シミュレーションをする</p>
+<a href="index.html" class="cta-btn">DebtLens で計算する →</a>
+</div>
+
+<h2>返済を早めるために</h2>
+<p>リボ残高の返済を早めるには、月々の返済額を増やすのが最も効果的です。三井住友カードの会員サイトやアプリから返済額の変更が可能です。</p>
+<p>家計全体の見直しや返済計画について専門家に相談したい場合は、FP（ファイナンシャルプランナー）の無料相談も活用できます。</p>
+
+<nav class="related"><h2>関連ページ</h2><div class="related-list">
+<a href="ribo-shikumi.html" class="related-card"><div class="related-icon">🔄</div><div class="related-info"><span>リボ払いの仕組み</span><small>利息構造と3つの方式を解説</small></div></a>
+<a href="kuriage-hensai.html" class="related-card"><div class="related-icon">🚀</div><div class="related-info"><span>繰上返済のコツ</span><small>少額でも効果がある理由</small></div></a>
+<a href="ribo-jigoku.html" class="related-card"><div class="related-icon">🆘</div><div class="related-info"><span>リボ地獄から抜け出す方法</span><small>今日からできる具体策</small></div></a>
+</div></nav>
+</article>
+
+<script>
+// Auto-calculate simulation table
+function calc(bal, mp, ar) {
+  const mr = ar/100/12; let b=bal,ti=0,m=0;
+  if(mp<=b*mr) return {m:Infinity,ti:0};
+  while(b>0&&m<1200){m++;const i=Math.round(b*mr);const p=Math.min(b,mp-i);b=Math.max(0,b-p);ti+=i;if(b<=0)break;}
+  return {m,ti};
+}
+const rate = 15.0;
+const balances = [100000,200000,300000,500000,1000000];
+const payments = [10000,15000,20000];
+const tbody = document.getElementById('card-sim-table');
+balances.forEach(bal => {
+  let row = `<tr><td style="font-weight:600">¥${bal.toLocaleString()}</td>`;
+  payments.forEach(mp => {
+    const r = calc(bal, mp, rate);
+    if(r.m === Infinity) { row += `<td style="color:var(--c-red-600)">返済不可</td>`; }
+    else { row += `<td>${r.m}ヶ月 / ¥${r.ti.toLocaleString()}</td>`; }
+  });
+  row += '</tr>';
+  tbody.innerHTML += row;
+});
+</script>
+
+<footer class="site-footer"><nav class="footer-links"><a href="index.html">ホーム</a><a href="guide.html">使い方ガイド</a><a href="glossary.html">用語集</a><a href="privacy.html">プライバシーポリシー</a><a href="about.html">運営者情報</a></nav><p>© 2026 DebtLens — 三井住友カードは各社の商標です。当サイトとの提携関係はありません。</p></footer>
+</body></html>

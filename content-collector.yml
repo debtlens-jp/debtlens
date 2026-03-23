@@ -1,0 +1,56 @@
+name: Daily Content Ideas Collector
+
+on:
+  schedule:
+    - cron: '0 21 * * *'  # UTC 21:00 = JST 6:00 AM
+  workflow_dispatch:
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Collect trending financial topics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const today = new Date().toISOString().slice(0, 10);
+            const topics = [
+              { keyword: "リボ払い", url: "https://news.google.com/rss/search?q=リボ払い&hl=ja&gl=JP&ceid=JP:ja" },
+              { keyword: "BNPL 後払い", url: "https://news.google.com/rss/search?q=BNPL+後払い&hl=ja&gl=JP&ceid=JP:ja" },
+              { keyword: "クレジットカード 金利", url: "https://news.google.com/rss/search?q=クレジットカード+金利&hl=ja&gl=JP&ceid=JP:ja" },
+              { keyword: "借金 返済", url: "https://news.google.com/rss/search?q=借金+返済&hl=ja&gl=JP&ceid=JP:ja" },
+              { keyword: "多重債務", url: "https://news.google.com/rss/search?q=多重債務&hl=ja&gl=JP&ceid=JP:ja" },
+              { keyword: "金融庁 規制", url: "https://news.google.com/rss/search?q=金融庁+規制&hl=ja&gl=JP&ceid=JP:ja" },
+              { keyword: "家計 節約", url: "https://news.google.com/rss/search?q=家計+節約&hl=ja&gl=JP&ceid=JP:ja" }
+            ];
+
+            let body = `## 📰 本日のトピック収集（${today}）\n\n`;
+            body += `以下のキーワードでGoogle Newsを自動チェックしました。\n`;
+            body += `コラムのネタや、SNS投稿の参考にしてください。\n\n`;
+
+            for (const t of topics) {
+              body += `### 🔍 ${t.keyword}\n`;
+              body += `[Google Newsで確認](${t.url})\n\n`;
+            }
+
+            body += `---\n\n`;
+            body += `### 💡 コラムのアイデア（自動提案）\n\n`;
+            body += `上記のニュースを元に、以下のようなコラムが書けるかもしれません：\n\n`;
+            body += `- 「最新ニュース」に基づく時事解説コラム\n`;
+            body += `- 「よくある質問」に追加できるFAQ\n`;
+            body += `- Xでシェアできる計算事例ツイート\n\n`;
+            body += `### 📊 定期チェック項目\n\n`;
+            body += `- [ ] Google News で新しいトピックを確認\n`;
+            body += `- [ ] Yahoo!知恵袋で新しいリボ関連質問をチェック\n`;
+            body += `- [ ] Search Console でインデックス状況確認\n`;
+            body += `- [ ] ASP審査結果の確認\n`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📰 コンテンツ収集（${today}）`,
+              body: body,
+              labels: ['content-ideas', 'daily']
+            });

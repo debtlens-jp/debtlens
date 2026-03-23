@@ -302,6 +302,13 @@ function calcRiboPanel() {
   `, p);
 
   drawBalanceChart('ribo-chart', result.history);
+
+  // Add diagnosis
+  const diagnosisHTML = generateDiagnosis(balance, monthly, rate, result);
+  const diagContainer = document.querySelector('#panel-ribo .ribo-results');
+  if (diagContainer && diagnosisHTML) {
+    diagContainer.insertAdjacentHTML('beforeend', diagnosisHTML);
+  }
 }
 
 function calcInstallmentPanel() {
@@ -701,3 +708,199 @@ function selectCompanyFromDropdown(nameSelect) {
 
 
 
+
+// ── SNS Share Function ──
+function shareResult() {
+  const panel = document.getElementById('panel-ribo');
+  if (!panel) return;
+  const balance = getVal('[data-field="balance"]', 'ribo');
+  const monthly = getVal('[data-field="monthly"]', 'ribo');
+  const rate = getVal('[data-field="rate"]', 'ribo');
+  const result = calcRiboGanriTeigaku(balance, monthly, rate);
+  if (result.error) return;
+
+  const text = `リボ残高 ¥${balance.toLocaleString()}（年率${rate}%）月${monthly.toLocaleString()}円返済\n→ 完済まで${result.months}ヶ月、利息合計 ¥${result.totalInterest.toLocaleString()}\n\nDebtLensで計算 👇`;
+  const url = 'https://debtlens-jp.github.io/debtlens/';
+
+  if (navigator.share) {
+    navigator.share({ title: 'DebtLens 計算結果', text: text, url: url }).catch(() => {});
+  } else {
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank');
+  }
+}
+
+// ── Save Result as Image ──
+function saveResultImage() {
+  const panel = document.getElementById('panel-ribo');
+  if (!panel) return;
+  const balance = getVal('[data-field="balance"]', 'ribo');
+  const monthly = getVal('[data-field="monthly"]', 'ribo');
+  const rate = getVal('[data-field="rate"]', 'ribo');
+  const result = calcRiboGanriTeigaku(balance, monthly, rate);
+  if (result.error) return;
+
+  const canvas = document.createElement('canvas');
+  const w = 600, h = 400;
+  canvas.width = w * 2; canvas.height = h * 2;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);
+
+  // Background
+  ctx.fillStyle = '#0c0f1a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Green accent bar
+  const grad = ctx.createLinearGradient(0, 0, w, 0);
+  grad.addColorStop(0, '#059669'); grad.addColorStop(1, '#10b981');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, 4);
+
+  // Title
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 18px system-ui';
+  ctx.fillText('DebtLens 計算結果', 24, 40);
+
+  // Divider
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  ctx.fillRect(24, 56, w - 48, 1);
+
+  // Input info
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '13px system-ui';
+  ctx.fillText(`利用残高: ¥${balance.toLocaleString()}　年率: ${rate}%　月額返済: ¥${monthly.toLocaleString()}`, 24, 82);
+
+  // Results
+  const cards = [
+    { label: '完済まで', value: `${result.months}ヶ月`, color: '#34d399', x: 24 },
+    { label: '利息合計', value: `¥${result.totalInterest.toLocaleString()}`, color: result.totalInterest > balance * 0.5 ? '#f87171' : '#fff', x: 214 },
+    { label: '総支払額', value: `¥${(balance + result.totalInterest).toLocaleString()}`, color: '#fff', x: 404 }
+  ];
+
+  cards.forEach(card => {
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.beginPath(); ctx.roundRect(card.x, 100, 170, 80, 12); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.font = '11px system-ui';
+    ctx.fillText(card.label, card.x + 14, 124);
+    ctx.fillStyle = card.color; ctx.font = 'bold 22px system-ui';
+    ctx.fillText(card.value, card.x + 14, 158);
+  });
+
+  // Mini chart
+  const chartY = 200, chartH = 150, chartW = w - 48;
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  ctx.beginPath(); ctx.roundRect(24, chartY, chartW, chartH + 20, 12); ctx.fill();
+
+  const maxBal = result.history[0].balance;
+  ctx.beginPath();
+  result.history.forEach((d, i) => {
+    const x = 36 + (i / (result.history.length - 1)) * (chartW - 24);
+    const y = chartY + 10 + chartH - (d.balance / maxBal) * chartH;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.stroke();
+
+  // Footer
+  ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = '11px system-ui';
+  ctx.fillText('debtlens-jp.github.io/debtlens', 24, h - 16);
+  ctx.fillText('※ 概算値です。実際の金利は各社規約をご確認ください。', w - 340, h - 16);
+
+  // Download
+  const link = document.createElement('a');
+  link.download = 'debtlens-result.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ── Dark Mode Toggle ──
+function toggleDarkMode() {
+  const html = document.documentElement;
+  const btn = document.getElementById('dark-toggle');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.removeAttribute('data-theme');
+    if (btn) btn.textContent = '🌙';
+    try { localStorage.setItem('debtlens-theme', 'light'); } catch(e) {}
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    if (btn) btn.textContent = '☀️';
+    try { localStorage.setItem('debtlens-theme', 'dark'); } catch(e) {}
+  }
+}
+// Auto-apply saved theme
+(function() {
+  try {
+    const saved = localStorage.getItem('debtlens-theme');
+    if (saved === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      setTimeout(() => {
+        const btn = document.getElementById('dark-toggle');
+        if (btn) btn.textContent = '☀️';
+      }, 0);
+    }
+  } catch(e) {}
+})();
+
+// ── Result Diagnosis (CTA Generator) ──
+function generateDiagnosis(balance, monthlyPay, rate, result) {
+  if (result.error) return '';
+  
+  const interestRatio = result.totalInterest / balance;
+  const months = result.months;
+  let level = 'safe'; // safe / caution / warning / danger
+  let messages = [];
+  let ctaType = 'none'; // none / fp / fp-strong
+
+  // Determine severity level
+  if (months > 60 || interestRatio > 0.8) {
+    level = 'danger';
+    messages.push('完済まで5年以上、または利息が元金の80%を超えています。早急な対策が必要です。');
+    ctaType = 'fp-strong';
+  } else if (months > 36 || interestRatio > 0.5) {
+    level = 'warning';
+    messages.push('利息の負担が大きい状態です。返済額の見直しで大幅に改善できる可能性があります。');
+    ctaType = 'fp';
+  } else if (months > 24 || interestRatio > 0.3) {
+    level = 'caution';
+    messages.push('計画的に返済できていますが、繰上返済でさらに利息を抑えられます。');
+    ctaType = 'fp';
+  } else {
+    level = 'safe';
+    messages.push('比較的短期間で完済できる見込みです。');
+    ctaType = 'none';
+  }
+
+  // Additional specific advice
+  if (monthlyPay <= balance * (rate / 100 / 12) * 1.5) {
+    messages.push('月々の返済額の多くが利息に消えています。可能なら返済額の増額を検討してください。');
+  }
+  if (balance >= 500000) {
+    messages.push('残高が50万円を超えています。おまとめローンによる金利引き下げも選択肢の一つです。');
+  }
+
+  const colors = { safe: '#22c55e', caution: '#f59e0b', warning: '#f97316', danger: '#ef4444' };
+  const labels = { safe: '✅ 安全圏', caution: '💡 改善の余地あり', warning: '⚠️ 要注意', danger: '🚨 要対策' };
+  const bgColors = { safe: 'rgba(34,197,94,0.06)', caution: 'rgba(245,158,11,0.06)', warning: 'rgba(249,115,22,0.06)', danger: 'rgba(239,68,68,0.06)' };
+  const borderColors = { safe: 'rgba(34,197,94,0.15)', caution: 'rgba(245,158,11,0.15)', warning: 'rgba(249,115,22,0.15)', danger: 'rgba(239,68,68,0.15)' };
+
+  let html = `<div class="diagnosis-card" style="background:${bgColors[level]};border:1px solid ${borderColors[level]};border-radius:16px;padding:18px 20px;margin-top:16px">`;
+  html += `<div style="font-size:14px;font-weight:700;color:${colors[level]};margin-bottom:8px">${labels[level]}</div>`;
+  messages.forEach(m => {
+    html += `<p style="font-size:13px;color:var(--c-gray-600);margin:4px 0;line-height:1.7">${m}</p>`;
+  });
+
+  // CTA based on diagnosis
+  if (ctaType === 'fp-strong') {
+    html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px">`;
+    html += `<p style="font-size:13px;font-weight:600;color:#ef4444;margin:0 0 8px">返済計画の見直しを専門家（FP）に無料で相談できます</p>`;
+    html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0">【広告】以下はアフィリエイトリンクです</p>`;
+    html += `<a href="#" rel="sponsored" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料でFPに相談する →</a>`;
+    html += `</div>`;
+  } else if (ctaType === 'fp') {
+    html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:12px">`;
+    html += `<p style="font-size:13px;color:var(--c-gray-600);margin:0 0 8px">お金のプロ（FP）に家計全体の見直しを無料相談できます</p>`;
+    html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0">【広告】以下はアフィリエイトリンクです</p>`;
+    html += `<a href="#" rel="sponsored" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:var(--c-green-500);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">FPに無料相談する →</a>`;
+    html += `</div>`;
+  }
+
+  html += '</div>';
+  return html;
+}
