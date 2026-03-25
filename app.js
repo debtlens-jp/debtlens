@@ -891,13 +891,13 @@ function generateDiagnosis(balance, monthlyPay, rate, result) {
     html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px">`;
     html += `<p style="font-size:13px;font-weight:600;color:#ef4444;margin:0 0 8px">返済計画の見直しを専門家（FP）に無料で相談できます</p>`;
     html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0">【広告】以下はアフィリエイトリンクです</p>`;
-    html += `<a href="#" rel="sponsored" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料でFPに相談する →</a>`;
+    html += `<a href="https://px.a8.net/svt/ejp?a8mat=4AZLSJ+DT4YWI+20NK+63WO2" rel="sponsored nofollow" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料でFPに相談する →</a>`;
     html += `</div>`;
   } else if (ctaType === 'fp') {
     html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:12px">`;
     html += `<p style="font-size:13px;color:var(--c-gray-600);margin:0 0 8px">お金のプロ（FP）に家計全体の見直しを無料相談できます</p>`;
     html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0">【広告】以下はアフィリエイトリンクです</p>`;
-    html += `<a href="#" rel="sponsored" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:var(--c-green-500);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">FPに無料相談する →</a>`;
+    html += `<a href="https://px.a8.net/svt/ejp?a8mat=4AZLSJ+DT4YWI+20NK+63WO2" rel="sponsored nofollow" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:var(--c-green-500);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">FPに無料相談する →</a>`;
     html += `</div>`;
   }
 
