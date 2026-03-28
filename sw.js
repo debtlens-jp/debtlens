@@ -1,4 +1,4 @@
-const CACHE_NAME = 'debtlens-v1';
+const CACHE_NAME = 'debtlens-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -26,13 +26,22 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: network first, fallback to cache
+// Fetch: GETのみキャッシュ対象（POST等は素通り）
 self.addEventListener('fetch', event => {
+  // GET以外はそのまま通す
+  if (event.request.method !== 'GET') return;
+
+  // chrome-extension等のスキームは無視
+  if (!event.request.url.startsWith('http')) return;
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        // 正常レスポンスのみキャッシュ
+        if (response && response.status === 200 && response.type !== 'opaque') {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
         return response;
       })
       .catch(() => caches.match(event.request))
