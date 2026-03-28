@@ -30,6 +30,62 @@
 <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
 <link rel="canonical" href="https://debtlens-jp.github.io/debtlens/">
 <link rel="stylesheet" href="style.css">
+
+<!-- ★ アフィリエイトCTA スタイル -->
+<style>
+#dl-affiliate-cta {
+  max-width: var(--max-w);
+  margin: 0 auto 24px;
+  padding: 0 16px;
+}
+.dl-cta-block {
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.dl-cta-heavy {
+  background: #fff5f5;
+  border: 1px solid #ffcccc;
+}
+.dl-cta-multi {
+  background: #f0f7ff;
+  border: 1px solid #b3d4ff;
+}
+.dl-cta-light {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+}
+.dl-cta-label {
+  font-weight: 700;
+  font-size: 13px;
+  margin: 0 0 6px;
+  color: #333;
+}
+.dl-cta-body {
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0 0 12px;
+  color: #555;
+}
+.dl-cta-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.dl-cta-btn:hover { opacity: 0.85; }
+.dl-cta-btn--red  { background: #e53935; color: #fff; }
+.dl-cta-btn--blue { background: #1565c0; color: #fff; }
+.dl-cta-btn--gray { background: #546e7a; color: #fff; }
+.dl-cta-note {
+  font-size: 11px;
+  color: #aaa;
+  margin: 8px 0 0;
+}
+</style>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -71,7 +127,6 @@
   ]
 }
 </script>
-
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -341,6 +396,59 @@
 
 </main>
 
+<!-- ★ アフィリエイトCTA（計算結果の直後・FAQの直前） -->
+<div id="dl-affiliate-cta" style="display:none;">
+
+  <!-- 重症: ひばり法律事務所（利息5万以上 or 完済36ヶ月以上） -->
+  <div id="dl-cta-heavy" class="dl-cta-block dl-cta-heavy" style="display:none;">
+    <p class="dl-cta-label">💡 この返済総額・期間が気になる方へ</p>
+    <p class="dl-cta-body">
+      利息が大きい場合、<strong>任意整理で利息をカット</strong>できるケースがあります。<br>
+      弁護士への相談は<strong>何度でも無料</strong>。全国対応・メール相談OK。
+    </p>
+    <a href="https://h.accesstrade.net/sp/cc?rk=0100l3sr00optv"
+       target="_blank" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade"
+       class="dl-cta-btn dl-cta-btn--red">
+      無料で借金相談してみる →
+    </a>
+    <p class="dl-cta-note">※ 弁護士法人ひばり法律事務所の外部サイトへ移動します。</p>
+    <img src="https://h.accesstrade.net/sp/rr?rk=0100l3sr00optv" width="1" height="1" border="0" alt="" style="display:none;">
+  </div>
+
+  <!-- 複数借入タブ: アース司法書士事務所 -->
+  <div id="dl-cta-multi" class="dl-cta-block dl-cta-multi" style="display:none;">
+    <p class="dl-cta-label">💡 複数の借入がある方へ</p>
+    <p class="dl-cta-body">
+      複数の借入を抱えている場合、<strong>一本化や整理</strong>で月々の負担を減らせる可能性があります。<br>
+      司法書士への相談は<strong>無料</strong>です。
+    </p>
+    <a href="https://h.accesstrade.net/sp/cc?rk=0100e24e00optv"
+       target="_blank" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade"
+       class="dl-cta-btn dl-cta-btn--blue">
+      無料で相談してみる →
+    </a>
+    <p class="dl-cta-note">※ アース司法書士事務所の外部サイトへ移動します。</p>
+    <img src="https://h.accesstrade.net/sp/rr?rk=0100e24e00optv" width="1" height="1" border="0" alt="" style="display:none;">
+  </div>
+
+  <!-- 軽症: 東京ロータス法律事務所（過払い金・軽症） -->
+  <div id="dl-cta-light" class="dl-cta-block dl-cta-light" style="display:none;">
+    <p class="dl-cta-label">💡 過去に借入があった方へ</p>
+    <p class="dl-cta-body">
+      以前リボ払いや消費者金融を利用していた場合、<strong>過払い金が戻ってくる</strong>可能性があります。<br>
+      まず無料で確認してみてください。
+    </p>
+    <a href="https://h.accesstrade.net/sp/cc?rk=0100jr5600optv"
+       target="_blank" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade"
+       class="dl-cta-btn dl-cta-btn--gray">
+      過払い金を無料確認する →
+    </a>
+    <p class="dl-cta-note">※ 弁護士法人東京ロータス法律事務所の外部サイトへ移動します。</p>
+    <img src="https://h.accesstrade.net/sp/rr?rk=0100jr5600optv" width="1" height="1" border="0" alt="" style="display:none;">
+  </div>
+
+</div>
+
 <!-- FAQ -->
 <section style="max-width:var(--max-w);margin:40px auto;padding:0 20px" id="faq">
   <h2 style="font-size:18px;font-weight:700;margin-bottom:16px">よくある質問</h2>
@@ -447,9 +555,144 @@
 <script src="app.js"></script>
 <script src="news.js"></script>
 <script src="consent.js"></script>
+
+<!-- ★ アフィリエイトCTA 制御スクリプト -->
+<script>
+(function () {
+  // 閾値
+  var HEAVY_INTEREST = 50000;  // 利息合計5万円以上
+  var HEAVY_MONTHS   = 36;     // 完済36ヶ月以上
+
+  // 数値文字列から数値を抽出（「71,234円」「38ヶ月」等に対応）
+  function parseNum(str) {
+    if (!str) return 0;
+    return parseInt(str.replace(/[^0-9]/g, ''), 10) || 0;
+  }
+
+  // 現在表示中のタブを返す
+  function activeTab() {
+    var btn = document.querySelector('.tab-btn.active');
+    return btn ? btn.getAttribute('data-tab') : 'ribo';
+  }
+
+  // 結果コンテナのテキストから利息合計・完済月数を抽出
+  function extractFromContainer(container) {
+    if (!container) return { interest: 0, months: 0 };
+    var text = container.innerText || container.textContent || '';
+    var interest = 0, months = 0;
+
+    // 利息合計: 「利息合計」「手数料合計」「総利息」の後の数値
+    var mi = text.match(/(?:利息合計|手数料合計|総利息)[^\d]*?([\d,]+)/);
+    if (mi) interest = parseNum(mi[1]);
+
+    // 完済月数: 「完済まで」「返済期間」の後の数値
+    var mm = text.match(/(?:完済まで|返済期間)[^\d]*?([\d,]+)/);
+    if (mm) months = parseNum(mm[1]);
+
+    return { interest: interest, months: months };
+  }
+
+  // 複数借入タブから直接値を読む
+  function extractFromMulti() {
+    var intEl = document.querySelector('.multi-total-interest');
+    var monEl = document.querySelector('.multi-total-months');
+    return {
+      interest: intEl ? parseNum(intEl.textContent) : 0,
+      months:   monEl ? parseNum(monEl.textContent) : 0
+    };
+  }
+
+  // CTAを表示する
+  function showCta(interest, months, tab) {
+    var wrap   = document.getElementById('dl-affiliate-cta');
+    var heavy  = document.getElementById('dl-cta-heavy');
+    var multi  = document.getElementById('dl-cta-multi');
+    var light  = document.getElementById('dl-cta-light');
+    if (!wrap) return;
+
+    // 全部隠す
+    heavy.style.display = 'none';
+    multi.style.display = 'none';
+    light.style.display = 'none';
+
+    if (tab === 'multi') {
+      multi.style.display = 'block';
+    } else if (interest >= HEAVY_INTEREST || months >= HEAVY_MONTHS) {
+      heavy.style.display = 'block';
+    } else {
+      light.style.display = 'block';
+    }
+
+    wrap.style.display = 'block';
+  }
+
+  // 計算結果を検知して表示を更新する
+  function refreshCta() {
+    var tab = activeTab();
+    var data;
+
+    if (tab === 'multi') {
+      data = extractFromMulti();
+    } else if (tab === 'ribo') {
+      data = extractFromContainer(document.querySelector('.ribo-results'));
+    } else if (tab === 'installment') {
+      data = extractFromContainer(document.querySelector('.installment-results'));
+    } else if (tab === 'compare') {
+      data = extractFromContainer(document.querySelector('.compare-results'));
+    } else if (tab === 'bnpl') {
+      data = extractFromContainer(document.querySelector('.bnpl-results'));
+    } else {
+      data = { interest: 0, months: 0 };
+    }
+
+    // 結果が空（計算未実行）なら非表示のまま
+    if (data.interest === 0 && data.months === 0) return;
+
+    showCta(data.interest, data.months, tab);
+  }
+
+  // calculate() を wrap して結果確定後にCTAを更新
+  function wrapCalculate() {
+    if (typeof window.calculate !== 'function') return;
+    var orig = window.calculate;
+    window.calculate = function () {
+      orig.apply(this, arguments);
+      setTimeout(refreshCta, 150);
+    };
+  }
+
+  // タブ切り替え時にもCTAを更新
+  function bindTabButtons() {
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setTimeout(refreshCta, 200);
+      });
+    });
+  }
+
+  // 複数借入タブの結果変化を MutationObserver で監視
+  function observeMulti() {
+    var el = document.querySelector('.multi-total-interest');
+    if (!el) return;
+    new MutationObserver(function () {
+      if (activeTab() === 'multi') setTimeout(refreshCta, 100);
+    }).observe(el, { childList: true, characterData: true, subtree: true });
+  }
+
+  // app.js ロード後に実行
+  window.addEventListener('load', function () {
+    wrapCalculate();
+    bindTabButtons();
+    observeMulti();
+    // 初回計算が既に走っている場合を考慮して一度試みる
+    setTimeout(refreshCta, 500);
+  });
+})();
+</script>
+
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.register('sw.js').catch(function(){});
 }
 </script>
 </body>
