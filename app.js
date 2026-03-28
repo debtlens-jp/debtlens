@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
   initSearch();
   initSliders();
-  // Set month input to current month
   const monthInput = document.querySelector('[data-field="start-date"]');
   if (monthInput && !monthInput.value) {
     const now = new Date();
@@ -40,13 +39,10 @@ async function loadRates() {
       ...cats.credit.companies.map(c => ({ ...c, category: cats.credit.label })),
       ...cats.bank.companies.map(c => ({ ...c, category: cats.bank.label }))
     ];
-    // Check data freshness
     const updated = new Date(state.rates.lastUpdated);
     const now = new Date();
     const daysDiff = Math.floor((now - updated) / (1000 * 60 * 60 * 24));
-    if (daysDiff > 90) {
-      showDataWarning(daysDiff);
-    }
+    if (daysDiff > 90) showDataWarning(daysDiff);
     updateLastUpdated();
   } catch (e) {
     console.warn('金利データの読み込みに失敗しました。デフォルト値を使用します。', e);
@@ -109,12 +105,11 @@ function initSearch() {
           const rate = parseFloat(item.dataset.rate);
           input.value = item.dataset.name;
           dropdown.style.display = 'none';
-          // Set the rate input in the same panel
           const panel = wrap.closest('.tab-panel');
           const rateInput = panel?.querySelector('[data-field="rate"]');
           const rateSlider = panel?.querySelector('[data-slider="rate"]');
-          if (rateInput) { rateInput.value = rate; }
-          if (rateSlider) { rateSlider.value = rate; }
+          if (rateInput) rateInput.value = rate;
+          if (rateSlider) rateSlider.value = rate;
           calculate();
         });
       });
@@ -303,11 +298,15 @@ function calcRiboPanel() {
 
   drawBalanceChart('ribo-chart', result.history);
 
-  // Add diagnosis
   const diagnosisHTML = generateDiagnosis(balance, monthly, rate, result);
   const diagContainer = document.querySelector('#panel-ribo .ribo-results');
   if (diagContainer && diagnosisHTML) {
     diagContainer.insertAdjacentHTML('beforeend', diagnosisHTML);
+  }
+
+  // ★ アフィリエイトCTA を直接呼び出す
+  if (typeof window.showAffiliateCta === 'function') {
+    window.showAffiliateCta({ totalInterest: result.totalInterest, months: result.months, tab: 'ribo' });
   }
 }
 
@@ -334,6 +333,12 @@ function calcInstallmentPanel() {
       </table>
     </div>
   `, p);
+
+  // 分割払いは最大回数(36回)の利息を参考値としてCTAに渡す
+  const maxPlan = plans[plans.length - 1];
+  if (typeof window.showAffiliateCta === 'function') {
+    window.showAffiliateCta({ totalInterest: maxPlan.totalFee, months: maxPlan.installments, tab: 'installment' });
+  }
 }
 
 function calcComparePanel() {
@@ -381,6 +386,11 @@ function calcComparePanel() {
       <div style="font-size:11px;color:var(--c-gray-500);margin-top:4px">${diffText}</div>
     </div>` : ''}
   `, p);
+
+  // ★ CTA呼び出し（リボ側の数値を使用）
+  if (!ribo.error && typeof window.showAffiliateCta === 'function') {
+    window.showAffiliateCta({ totalInterest: ribo.totalInterest, months: ribo.months, tab: 'compare' });
+  }
 }
 
 function calcBNPLPanel() {
@@ -389,14 +399,17 @@ function calcBNPLPanel() {
   const service = document.querySelector('#panel-bnpl .seg-btn.active')?.dataset.service || 'paidy6';
 
   let html = '';
+  let interest = 0, months = 0;
+
   if (service === 'paidy6' || service === 'paidy12') {
-    const months = service === 'paidy6' ? 6 : 12;
+    const m = service === 'paidy6' ? 6 : 12;
     const mFee = Math.round(amount * 0.035);
-    const tFee = mFee * months;
-    const mp = Math.round(amount / months) + mFee;
+    const tFee = mFee * m;
+    const mp = Math.round(amount / m) + mFee;
+    interest = tFee; months = m;
     html = `
       <div class="result-grid mb-16">
-        <div class="result-card"><div class="label">支払い期間</div><div class="value">${months}ヶ月</div></div>
+        <div class="result-card"><div class="label">支払い期間</div><div class="value">${m}ヶ月</div></div>
         <div class="result-card ${tFee > amount * 0.2 ? 'warn' : ''}"><div class="label">手数料合計</div><div class="value">¥${tFee.toLocaleString()}</div></div>
         <div class="result-card"><div class="label">総支払額</div><div class="value">¥${(amount + tFee).toLocaleString()}</div></div>
       </div>
@@ -417,6 +430,7 @@ function calcBNPLPanel() {
   } else {
     const mp = Math.max(1000, Math.round(amount / 24));
     const r = calcRiboGanriTeigaku(amount, mp, 15.0);
+    interest = r.totalInterest; months = r.months;
     html = `
       <div class="result-grid mb-16">
         <div class="result-card"><div class="label">月額設定</div><div class="value">¥${mp.toLocaleString()}</div></div>
@@ -426,7 +440,13 @@ function calcBNPLPanel() {
       <div class="box box-red"><div class="box-title">⚠ メルペイ定額払い = リボ払い</div>
       <p style="font-size:13px;margin:0">年率15.0%のリボルビング方式です。月額設定を上げると利息を抑えられます。</p></div>`;
   }
+
   setHTML('.bnpl-results', html, p);
+
+  // ★ CTA呼び出し
+  if (interest > 0 && typeof window.showAffiliateCta === 'function') {
+    window.showAffiliateCta({ totalInterest: interest, months: months, tab: 'bnpl' });
+  }
 }
 
 function calcMultiPanel() {
@@ -445,6 +465,11 @@ function calcMultiPanel() {
   setText('.multi-total-monthly', `¥${totalMon.toLocaleString()}`, 'multi');
   setText('.multi-total-interest', `¥${totalInt.toLocaleString()}`, 'multi');
   setText('.multi-total-months', `${maxMon}ヶ月`, 'multi');
+
+  // ★ CTA呼び出し（複数借入タブ → アース司法書士）
+  if (totalInt > 0 && typeof window.showAffiliateCta === 'function') {
+    window.showAffiliateCta({ totalInterest: totalInt, months: maxMon, tab: 'multi' });
+  }
 }
 
 // ── SVG Balance Chart (Canvas fallback) ──
@@ -463,14 +488,12 @@ function drawBalanceChart(canvasId, history) {
   const cw = w - pad.l - pad.r;
   const ch = h - pad.t - pad.b;
 
-  // Grid
   ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 0.5;
   for (let i = 0; i <= 4; i++) {
     const y = pad.t + (ch / 4) * i;
     ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
   }
 
-  // Area
   ctx.beginPath();
   ctx.moveTo(pad.l, pad.t + ch);
   history.forEach((d, i) => {
@@ -485,7 +508,6 @@ function drawBalanceChart(canvasId, history) {
   grad.addColorStop(1, 'rgba(34,197,94,0.02)');
   ctx.fillStyle = grad; ctx.fill();
 
-  // Line
   ctx.beginPath();
   ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
   history.forEach((d, i) => {
@@ -495,7 +517,6 @@ function drawBalanceChart(canvasId, history) {
   });
   ctx.stroke();
 
-  // Labels
   ctx.fillStyle = '#aaa'; ctx.font = '10px system-ui';
   ctx.textAlign = 'right';
   ctx.fillText(`¥${maxBal.toLocaleString()}`, pad.l - 4, pad.t + 10);
@@ -581,7 +602,6 @@ function filterCompanyDropdown(categorySelect) {
   const category = categorySelect.value;
   nameSelect.innerHTML = '<option value="">会社を選択</option>';
 
-  // Clear rate badge
   const selector = categorySelect.closest('.company-selector');
   const display = selector ? selector.querySelector('.selected-rate-display') : null;
   if (display) display.innerHTML = '';
@@ -611,7 +631,6 @@ function selectCompanyFromDropdown(nameSelect) {
   if (rateInput) rateInput.value = rate;
   if (rateSlider) rateSlider.value = rate;
 
-  // Show rate badge
   const selector = nameSelect.closest('.company-selector');
   const display = selector ? selector.querySelector('.selected-rate-display') : null;
   const companyName = nameSelect.options[nameSelect.selectedIndex].text.split('（')[0];
@@ -627,7 +646,6 @@ function selectCompanyFromDropdown(nameSelect) {
   const origDraw = drawBalanceChart;
   drawBalanceChart = function(canvasId, history) {
     origDraw(canvasId, history);
-    // After drawing, apply responsive height
     const canvas = document.getElementById(canvasId);
     if (canvas && window.innerWidth >= 768) {
       const w = canvas.parentElement.clientWidth - 48;
@@ -636,7 +654,6 @@ function selectCompanyFromDropdown(nameSelect) {
       canvas.height = h * 2;
       canvas.style.width = w + 'px';
       canvas.style.height = h + 'px';
-      // Redraw with new dimensions
       const ctx = canvas.getContext('2d');
       ctx.scale(2, 2);
 
@@ -645,21 +662,17 @@ function selectCompanyFromDropdown(nameSelect) {
       const cw = w - pad.l - pad.r;
       const ch = h - pad.t - pad.b;
 
-      // Clear
       ctx.clearRect(0, 0, w, h);
 
-      // Grid lines
       ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 0.5;
       for (let i = 0; i <= 5; i++) {
         const y = pad.t + (ch / 5) * i;
         ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
-        // Y-axis labels
         const val = maxBal - (maxBal / 5) * i;
         ctx.fillStyle = '#bbb'; ctx.font = '11px system-ui'; ctx.textAlign = 'right';
         ctx.fillText('¥' + Math.round(val).toLocaleString(), pad.l - 8, y + 4);
       }
 
-      // Area fill
       ctx.beginPath();
       ctx.moveTo(pad.l, pad.t + ch);
       history.forEach((d, i) => {
@@ -674,7 +687,6 @@ function selectCompanyFromDropdown(nameSelect) {
       grad.addColorStop(1, 'rgba(34,197,94,0.02)');
       ctx.fillStyle = grad; ctx.fill();
 
-      // Line
       ctx.beginPath();
       ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       history.forEach((d, i) => {
@@ -684,19 +696,15 @@ function selectCompanyFromDropdown(nameSelect) {
       });
       ctx.stroke();
 
-      // Dots and labels
       const step = Math.max(1, Math.floor(history.length / 6));
       ctx.fillStyle = '#aaa'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
       for (let i = 0; i < history.length; i += step) {
         const x = pad.l + (i / (history.length - 1)) * cw;
         const y = pad.t + ch - (history[i].balance / maxBal) * ch;
-        // Dot
         ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fillStyle = '#22c55e'; ctx.fill();
-        // Month label
         ctx.fillStyle = '#aaa';
         ctx.fillText(history[i].month + '月', x, h - 8);
       }
-      // Last point
       const lastX = pad.l + cw;
       const lastY = pad.t + ch - (history[history.length - 1].balance / maxBal) * ch;
       ctx.beginPath(); ctx.arc(lastX, lastY, 3.5, 0, Math.PI * 2); ctx.fillStyle = '#22c55e'; ctx.fill();
@@ -705,9 +713,6 @@ function selectCompanyFromDropdown(nameSelect) {
     }
   };
 })();
-
-
-
 
 // ── SNS Share Function ──
 function shareResult() {
@@ -746,29 +751,23 @@ function saveResultImage() {
   const ctx = canvas.getContext('2d');
   ctx.scale(2, 2);
 
-  // Background
   ctx.fillStyle = '#0c0f1a';
   ctx.fillRect(0, 0, w, h);
 
-  // Green accent bar
   const grad = ctx.createLinearGradient(0, 0, w, 0);
   grad.addColorStop(0, '#059669'); grad.addColorStop(1, '#10b981');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, 4);
 
-  // Title
   ctx.fillStyle = '#fff'; ctx.font = 'bold 18px system-ui';
   ctx.fillText('DebtLens 計算結果', 24, 40);
 
-  // Divider
   ctx.fillStyle = 'rgba(255,255,255,0.06)';
   ctx.fillRect(24, 56, w - 48, 1);
 
-  // Input info
   ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '13px system-ui';
   ctx.fillText(`利用残高: ¥${balance.toLocaleString()}　年率: ${rate}%　月額返済: ¥${monthly.toLocaleString()}`, 24, 82);
 
-  // Results
   const cards = [
     { label: '完済まで', value: `${result.months}ヶ月`, color: '#34d399', x: 24 },
     { label: '利息合計', value: `¥${result.totalInterest.toLocaleString()}`, color: result.totalInterest > balance * 0.5 ? '#f87171' : '#fff', x: 214 },
@@ -784,7 +783,6 @@ function saveResultImage() {
     ctx.fillText(card.value, card.x + 14, 158);
   });
 
-  // Mini chart
   const chartY = 200, chartH = 150, chartW = w - 48;
   ctx.fillStyle = 'rgba(255,255,255,0.03)';
   ctx.beginPath(); ctx.roundRect(24, chartY, chartW, chartH + 20, 12); ctx.fill();
@@ -798,12 +796,10 @@ function saveResultImage() {
   });
   ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.stroke();
 
-  // Footer
   ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = '11px system-ui';
   ctx.fillText('debtlens-jp.github.io/debtlens', 24, h - 16);
   ctx.fillText('※ 概算値です。実際の金利は各社規約をご確認ください。', w - 340, h - 16);
 
-  // Download
   const link = document.createElement('a');
   link.download = 'debtlens-result.png';
   link.href = canvas.toDataURL('image/png');
@@ -824,7 +820,6 @@ function toggleDarkMode() {
     try { localStorage.setItem('debtlens-theme', 'dark'); } catch(e) {}
   }
 }
-// Auto-apply saved theme
 (function() {
   try {
     const saved = localStorage.getItem('debtlens-theme');
@@ -838,41 +833,36 @@ function toggleDarkMode() {
   } catch(e) {}
 })();
 
-// ── Result Diagnosis (CTA Generator) ──
+// ── Result Diagnosis
+// ★ アフィリエイトURL更新: ひばり（重症）/ アース（警告）/ ロータス（注意）
+// ── ──────────────────────────────────────
 function generateDiagnosis(balance, monthlyPay, rate, result) {
   if (result.error) return '';
-  
+
   const interestRatio = result.totalInterest / balance;
   const months = result.months;
-  let level = 'safe'; // safe / caution / warning / danger
+  let level = 'safe';
   let messages = [];
-  let ctaType = 'none'; // none / fp / fp-strong
 
-  // Determine severity level
   if (months > 60 || interestRatio > 0.8) {
     level = 'danger';
     messages.push('完済まで5年以上、または利息が元金の80%を超えています。早急な対策が必要です。');
-    ctaType = 'fp-strong';
   } else if (months > 36 || interestRatio > 0.5) {
     level = 'warning';
     messages.push('利息の負担が大きい状態です。返済額の見直しで大幅に改善できる可能性があります。');
-    ctaType = 'fp';
   } else if (months > 24 || interestRatio > 0.3) {
     level = 'caution';
     messages.push('計画的に返済できていますが、繰上返済でさらに利息を抑えられます。');
-    ctaType = 'fp';
   } else {
     level = 'safe';
     messages.push('比較的短期間で完済できる見込みです。');
-    ctaType = 'none';
   }
 
-  // Additional specific advice
   if (monthlyPay <= balance * (rate / 100 / 12) * 1.5) {
     messages.push('月々の返済額の多くが利息に消えています。可能なら返済額の増額を検討してください。');
   }
   if (balance >= 500000) {
-    messages.push('残高が50万円を超えています。おまとめローンによる金利引き下げも選択肢の一つです。');
+    messages.push('残高が50万円を超えています。債務整理や一本化による金利引き下げも選択肢の一つです。');
   }
 
   const colors = { safe: '#22c55e', caution: '#f59e0b', warning: '#f97316', danger: '#ef4444' };
@@ -886,18 +876,32 @@ function generateDiagnosis(balance, monthlyPay, rate, result) {
     html += `<p style="font-size:13px;color:var(--c-gray-600);margin:4px 0;line-height:1.7">${m}</p>`;
   });
 
-  // CTA based on diagnosis
-  if (ctaType === 'fp-strong') {
+  // ★ アフィリエイトCTA（レベル別に案件を出し分け）
+  if (level === 'danger') {
+    // 重症 → ひばり法律事務所（13,185円 / メール問い合わせ）
     html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px">`;
-    html += `<p style="font-size:13px;font-weight:600;color:#ef4444;margin:0 0 8px">返済計画の見直しを専門家（FP）に無料で相談できます</p>`;
-    html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0">【広告】以下はアフィリエイトリンクです</p>`;
-    html += `<a href="https://px.a8.net/svt/ejp?a8mat=4AZLSJ+DT4YWI+20NK+63WO2" rel="sponsored nofollow" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料でFPに相談する →</a>`;
+    html += `<p style="font-size:13px;font-weight:600;color:#ef4444;margin:0 0 6px">返済が厳しい方へ：弁護士に無料で相談できます</p>`;
+    html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0 0 10px">任意整理・自己破産などで月々の負担を減らせる可能性があります。相談無料・全国対応。</p>`;
+    html += `<p style="font-size:10px;color:#ccc;margin:0 0 6px">※ 広告（アフィリエイトリンク）</p>`;
+    html += `<a href="https://h.accesstrade.net/sp/cc?rk=0100l3sr00optv" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade" target="_blank" style="display:inline-block;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料で弁護士に相談する →</a>`;
+    html += `<img src="https://h.accesstrade.net/sp/rr?rk=0100l3sr00optv" width="1" height="1" border="0" alt="" style="display:none;">`;
     html += `</div>`;
-  } else if (ctaType === 'fp') {
-    html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:12px">`;
-    html += `<p style="font-size:13px;color:var(--c-gray-600);margin:0 0 8px">お金のプロ（FP）に家計全体の見直しを無料相談できます</p>`;
-    html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0">【広告】以下はアフィリエイトリンクです</p>`;
-    html += `<a href="https://px.a8.net/svt/ejp?a8mat=4AZLSJ+DT4YWI+20NK+63WO2" rel="sponsored nofollow" class="cta-btn" style="display:inline-block;margin-top:10px;padding:10px 24px;background:var(--c-green-500);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">FPに無料相談する →</a>`;
+  } else if (level === 'warning') {
+    // 警告 → アース司法書士事務所（12,381円 / 無料相談申込）
+    html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.15);border-radius:12px">`;
+    html += `<p style="font-size:13px;font-weight:600;color:#f97316;margin:0 0 6px">返済の見直しを専門家に相談してみませんか？</p>`;
+    html += `<p style="font-size:11px;color:var(--c-gray-500);margin:0 0 10px">借金の整理・減額の可能性を司法書士が無料で診断します。</p>`;
+    html += `<p style="font-size:10px;color:#ccc;margin:0 0 6px">※ 広告（アフィリエイトリンク）</p>`;
+    html += `<a href="https://h.accesstrade.net/sp/cc?rk=0100e24e00optv" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade" target="_blank" style="display:inline-block;padding:10px 24px;background:#f97316;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料で司法書士に相談する →</a>`;
+    html += `<img src="https://h.accesstrade.net/sp/rr?rk=0100e24e00optv" width="1" height="1" border="0" alt="" style="display:none;">`;
+    html += `</div>`;
+  } else if (level === 'caution') {
+    // 注意 → 東京ロータス（7,400円 / 過払い金）
+    html += `<div style="margin-top:14px;padding:14px 16px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:12px">`;
+    html += `<p style="font-size:13px;color:var(--c-gray-600);margin:0 0 6px">過去にリボ払いや消費者金融を利用していた場合、過払い金が戻ってくる可能性があります。</p>`;
+    html += `<p style="font-size:10px;color:#ccc;margin:0 0 6px">※ 広告（アフィリエイトリンク）</p>`;
+    html += `<a href="https://h.accesstrade.net/sp/cc?rk=0100jr5600optv" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade" target="_blank" style="display:inline-block;padding:10px 24px;background:#f59e0b;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">過払い金を無料確認する →</a>`;
+    html += `<img src="https://h.accesstrade.net/sp/rr?rk=0100jr5600optv" width="1" height="1" border="0" alt="" style="display:none;">`;
     html += `</div>`;
   }
 
