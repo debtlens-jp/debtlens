@@ -93,6 +93,7 @@ function updateDiagnosis() {
     actions = `
       <p style="font-size:13px;margin:4px 0">→ <a href="index.html">シミュレーター</a>で完済時期を確認しておくとさらに安心です</p>
       <p style="font-size:13px;margin:4px 0">→ <a href="kuriage-hensai.html">繰上返済のコツ</a>で利息をさらに節約</p>`;
+
   } else if (count <= 5) {
     level = 'caution'; color = '#f59e0b'; bgColor = 'rgba(245,158,11,0.06)'; borderColor = 'rgba(245,158,11,0.15)';
     title = '⚠️ 注意（' + count + '/10）';
@@ -101,10 +102,14 @@ function updateDiagnosis() {
       <p style="font-size:13px;margin:4px 0">→ <a href="index.html">シミュレーター</a>で現在の残高を入力し、完済計画を立てましょう</p>
       <p style="font-size:13px;margin:4px 0">→ <a href="ribo-jigoku.html">リボ地獄から抜け出す5つの方法</a>を読む</p>
       <p style="font-size:13px;margin:4px 0">→ 返済額の増額を検討してください</p>
-      <div style="margin-top:12px;padding:12px 16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px">
-        <p style="font-size:12px;color:#888;margin:0 0 6px">【広告】家計の見直しをプロに無料相談</p>
-        <a href="https://px.a8.net/svt/ejp?a8mat=4AZLSJ+DT4YWI+20NK+63WO2" rel="sponsored nofollow" style="font-size:13px;font-weight:700;color:#22c55e">FPに無料相談する →</a>
+      <div style="margin-top:12px;padding:14px 16px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:10px">
+        <p style="font-size:13px;font-weight:600;color:#f59e0b;margin:0 0 4px">過去に消費者金融・リボを使っていた方へ</p>
+        <p style="font-size:12px;color:#888;margin:0 0 8px">払いすぎた利息が戻ってくる「過払い金」が発生している可能性があります。無料で確認できます。</p>
+        <p style="font-size:10px;color:#ccc;margin:0 0 8px">※ 広告（アフィリエイトリンク）</p>
+        <a href="https://h.accesstrade.net/sp/cc?rk=0100jr5600optv" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade" target="_blank" style="display:inline-block;padding:10px 22px;background:#f59e0b;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">過払い金を無料確認する →</a>
+        <img src="https://h.accesstrade.net/sp/rr?rk=0100jr5600optv" width="1" height="1" border="0" alt="" style="display:none;">
       </div>`;
+
   } else {
     level = 'danger'; color = '#ef4444'; bgColor = 'rgba(239,68,68,0.06)'; borderColor = 'rgba(239,68,68,0.15)';
     title = '🚨 要対策（' + count + '/10）';
@@ -115,8 +120,10 @@ function updateDiagnosis() {
       <p style="font-size:13px;margin:4px 0">→ まずは追加利用を止め、返済に集中しましょう</p>
       <div style="margin-top:12px;padding:14px 16px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px">
         <p style="font-size:13px;font-weight:600;color:#ef4444;margin:0 0 4px">専門家への相談を強くおすすめします</p>
-        <p style="font-size:12px;color:#888;margin:0 0 8px">【広告】返済計画の見直しをFPに無料で相談できます</p>
-        <a href="https://px.a8.net/svt/ejp?a8mat=4AZLSJ+DT4YWI+20NK+63WO2" rel="sponsored nofollow" style="display:inline-block;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料でFPに相談する →</a>
+        <p style="font-size:12px;color:#888;margin:0 0 8px">任意整理・自己破産などで月々の返済を大幅に減らせる可能性があります。相談は何度でも無料・全国対応。</p>
+        <p style="font-size:10px;color:#ccc;margin:0 0 8px">※ 広告（アフィリエイトリンク）</p>
+        <a href="https://h.accesstrade.net/sp/cc?rk=0100l3sr00optv" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade" target="_blank" style="display:inline-block;padding:10px 24px;background:#ef4444;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">無料で弁護士に相談する →</a>
+        <img src="https://h.accesstrade.net/sp/rr?rk=0100l3sr00optv" width="1" height="1" border="0" alt="" style="display:none;">
       </div>
       <div style="margin-top:10px;padding:12px 16px;background:var(--c-gray-50);border:1px solid var(--c-gray-200);border-radius:10px">
         <p style="font-size:12px;color:#888;margin:0"><strong>無料の公的相談窓口：</strong><br>消費者ホットライン: 188 ／ 法テラス: 0570-078374</p>
@@ -138,6 +145,27 @@ function updateDiagnosis() {
 <h2>診断結果について</h2>
 <p>この診断は一般的な目安であり、個別の状況を正確に判定するものではありません。チェック数が少なくても不安がある場合は、早めに専門家に相談することをおすすめします。</p>
 <p>返済状況に応じた具体的な返済計画は、DebtLensのシミュレーターで計算できます。</p>
+
+<!-- ★ アフィリエイトCTA（「DebtLensで計算する」の直前） -->
+<div style="margin:24px 0;padding:20px;background:#fff5f5;border:1px solid #ffcccc;border-radius:12px;">
+  <p style="font-size:14px;font-weight:700;color:#e53935;margin:0 0 8px;">
+    💡 チェック数が多かった方へ
+  </p>
+  <p style="font-size:13px;color:#555;line-height:1.7;margin:0 0 14px;">
+    借金の整理・減額について、弁護士に<strong>無料で相談</strong>できます。<br>
+    全国対応・メール相談OK。相談するだけで状況が整理されます。
+  </p>
+  <p style="font-size:10px;color:#bbb;margin:0 0 8px;">※ 広告（アフィリエイトリンク）</p>
+  <a href="https://h.accesstrade.net/sp/cc?rk=0100l3sr00optv"
+     target="_blank" rel="nofollow noopener" referrerpolicy="no-referrer-when-downgrade"
+     style="display:inline-block;padding:12px 28px;background:#e53935;color:#fff;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;">
+    無料で弁護士に相談する →
+  </a>
+  <img src="https://h.accesstrade.net/sp/rr?rk=0100l3sr00optv" width="1" height="1" border="0" alt="" style="display:none;">
+  <p style="font-size:11px;color:#aaa;margin:10px 0 0;">
+    ※ 弁護士法人ひばり法律事務所の外部サイトへ移動します。
+  </p>
+</div>
 
 <div class="cta-block"><p style="font-size:14px;margin-bottom:14px;color:var(--c-gray-800)">あなたの残高で完済計画を立てよう</p><a href="index.html" class="cta-btn">DebtLens で計算する →</a></div>
 
