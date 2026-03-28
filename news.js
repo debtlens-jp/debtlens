@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════
    DebtLens — news.js
-   ニュースウィジェット（RSS2JSON API経由・GitHub Actions不要）
+   ニュースウィジェット（静的コンテンツ表示）
    ═══════════════════════════════════════════ */
 
 'use strict';
@@ -8,18 +8,34 @@
 (function () {
   const MAX_ITEMS = 5;
 
-  // Google News RSS（借金・返済関連）
-  const RSS_URL = 'https://news.google.com/rss/search?q=%E5%80%9F%E9%87%91+%E8%BF%94%E6%B8%88+%E3%83%AA%E3%83%9C%E6%89%95%E3%81%84&hl=ja&gl=JP&ceid=JP:ja';
-
-  // 無料CORSプロキシ（RSS→JSON変換）
-  const API = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS_URL) + '&count=' + MAX_ITEMS;
-
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    if (isNaN(d)) return '';
-    return d.getFullYear() + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0');
-  }
+  // 外部APIが不安定なため、DebtLens関連記事を静的表示
+  const STATIC_ITEMS = [
+    {
+      title: 'リボ地獄から抜け出す5つの方法',
+      url: 'https://debtlens-jp.github.io/debtlens/ribo-jigoku.html',
+      source: 'DebtLens コラム'
+    },
+    {
+      title: '多重債務の返済戦略｜雪だるま方式と雪崩方式の比較',
+      url: 'https://debtlens-jp.github.io/debtlens/tasaju-saimu.html',
+      source: 'DebtLens コラム'
+    },
+    {
+      title: 'Paidy・メルペイ後払いの手数料を実数値で解説',
+      url: 'https://debtlens-jp.github.io/debtlens/bnpl-chuiten.html',
+      source: 'DebtLens コラム'
+    },
+    {
+      title: '繰上返済のコツ｜少額でも早く返す効果を計算で確認',
+      url: 'https://debtlens-jp.github.io/debtlens/kuriage-hensai.html',
+      source: 'DebtLens コラム'
+    },
+    {
+      title: '借入診断チェックリスト｜あなたの返済状況は安全？',
+      url: 'https://debtlens-jp.github.io/debtlens/shindan.html',
+      source: 'DebtLens コラム'
+    }
+  ];
 
   function escapeHTML(str) {
     const div = document.createElement('div');
@@ -27,47 +43,31 @@
     return div.innerHTML;
   }
 
-  async function loadNews() {
+  function renderItems(items, container) {
+    let html = '<div class="news-list">';
+    items.slice(0, MAX_ITEMS).forEach(item => {
+      html += `
+        <div class="news-item">
+          <a href="${escapeHTML(item.url)}" rel="noopener">${escapeHTML(item.title)}</a>
+          <span class="source">${escapeHTML(item.source)}</span>
+        </div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  function loadNews() {
     const container = document.getElementById('news-widget');
     if (!container) return;
 
-    // ローディング表示
-    container.innerHTML = '<p style="font-size:12px;color:var(--c-gray-400);padding:8px 0">読み込み中...</p>';
-
-    try {
-      const res = await fetch(API);
-      if (!res.ok) throw new Error('fetch failed');
-      const data = await res.json();
-
-      if (!data.items || data.items.length === 0) {
-        container.style.display = 'none';
-        return;
-      }
-
-      let html = '<div class="news-list">';
-      data.items.forEach(item => {
-        const title = escapeHTML(item.title || '');
-        const url   = escapeHTML(item.link  || '#');
-        const src   = escapeHTML(item.author || '');
-        const date  = formatDate(item.pubDate);
-
-        html += `
-          <div class="news-item">
-            <a href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>
-            <span class="source">${src}</span>
-            ${date ? `<span style="font-size:11px;color:var(--c-gray-400);white-space:nowrap">${date}</span>` : ''}
-          </div>`;
-      });
-      html += '</div>';
-      html += '<p class="news-note">※ 見出しのみ自動取得。記事内容は各メディアの著作物です。</p>';
-
-      container.innerHTML = html;
-
-    } catch (e) {
-      // 取得失敗時はセクションごと非表示
-      const section = container.closest('section');
-      if (section) section.style.display = 'none';
+    // セクションのタイトルを「関連コラム」に変更
+    const section = container.closest('section');
+    if (section) {
+      const h2 = section.querySelector('h2');
+      if (h2) h2.textContent = '📚 関連コラム・ガイド';
     }
+
+    renderItems(STATIC_ITEMS, container);
   }
 
   if (document.readyState === 'loading') {
